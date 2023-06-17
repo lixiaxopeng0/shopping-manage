@@ -1,5 +1,5 @@
 <template>
-    <div>内容区域</div>
+    <div><router-view /></div>
 </template>
   
 <script>

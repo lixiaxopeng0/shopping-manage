@@ -4,16 +4,32 @@ import Layout from '../views/Layout/index.vue';
 import Login from '../views/Login/index.vue';
 import MyHome from '../views/MyHome/index.vue';
 
+const ShopList = () => import('../views/ShopList/index.vue');
+const ShopMonitoring = () => import('../views/ShopMonitoring/index.vue');
+
 Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '',
+    path: '/',
     component: Layout,
+    name: 'Layout',
+    redirect: '/home',
     children: [
       {
         path: 'home',
+        name: 'MyHome',
         component: MyHome,
+      },
+      {
+        path: 'shop-list',
+        name: 'ShopList',
+        component: ShopList,
+      },
+      {
+        path: 'shop-monitoring',
+        name: 'ShopMonitoring',
+        component: ShopMonitoring,
       },
     ],
   },
