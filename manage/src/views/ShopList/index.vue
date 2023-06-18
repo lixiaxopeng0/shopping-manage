@@ -4,7 +4,8 @@
             <div slot="header" class="clearfix">
                 <span>商品列表</span>
             </div>
-            <ListView :tableData="tableData.data" :total="tableData.total" :columns="columns" @request="getList" />
+            <ListView :tableData="tableData.data" :total="tableData.total" :columns="columns" @request="getList"
+                :showSearch="true" :searchName="searchName" :placeholder="placeholder" />
         </el-card>
     </div>
 </template>
@@ -22,12 +23,13 @@ export default {
         return {
             tableData: [],
             columns,
+            searchName: 'productName',
+            placeholder: '请输入产品名称'
         };
     },
     methods: {
         async getList(params) {
             try {
-                console.log(params);
                 const data = await shop.getList(params);
                 this.tableData = data;
             } catch (e) {

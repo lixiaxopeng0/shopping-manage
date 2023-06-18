@@ -28,13 +28,16 @@ const app = express();
 
 app.get('/shop-list', (req, res) => {
   console.log();
-  const {page, pageSize} = req.query;
+  const {page, pageSize, searchName} = req.query;
+  const list = baseList.data.filter((i) => {
+    return i?.productName.includes(searchName) || !searchName;
+  });
   const start = (page - 1) * pageSize;
   const end = start + pageSize;
-  const data = baseList.data.slice(start, end);
+  const data = list.slice(start, end);
   res.json({
     data,
-    total: baseList.data.length,
+    total: list.length,
     status: 200,
   });
 });

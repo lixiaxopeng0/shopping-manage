@@ -1,5 +1,10 @@
 <template>
     <div>
+        <div class="search-input">
+            <el-input :placeholder="placeholder" v-model="input" @keyup.enter.native="handleEnter" clearable
+                style="width: 240px" @clear="clear">
+            </el-input>
+        </div>
         <el-table :data="data.tableData" :style="myStyle">
             <el-table-column v-for="({ label, prop, width = 'auto', render, id, tooltip = false }) in columns" :prop="prop"
                 :label="label" :width="width" v-bind:key="id" :show-overflow-tooltip="tooltip">
@@ -43,6 +48,18 @@ export default {
             type: Array,
             default: () => [10, 20, 30, 40]
         },
+        showSearch: {
+            type: Boolean,
+            default: true,
+        },
+        searchName: {
+            type: String,
+            default: '',
+        },
+        placeholder: {
+            type: String,
+            default: '请输入所搜内容'
+        }
     },
     data() {
         return {
@@ -53,6 +70,8 @@ export default {
                 total: 0,
             },
             showPaginations: false,
+            input: '',
+            searchText: '',
         };
     },
     watch: {
@@ -76,16 +95,24 @@ export default {
             const params = {
                 page: this.currentPage,
                 pageSize: this.pageSize,
+                ...(this.searchName && this.searchText ? { searchName: this.searchText } : {})
             };
             this.$emit('request', params);
             return params;
         },
     },
     methods: {
+        clear() {
+            this.searchText = '';
+        },
+        handleEnter() {
+            console.log(this.input);
+            if (this.searchName) {
+                this.searchText = this.input;
+            }
+        },
         click(value) {
             this.currentPage = value;
-            console.log(value, '-va-');
-
         },
         currentChange(value) {
             this.currentPage = value;
@@ -98,6 +125,18 @@ export default {
 };
 </script>
 <style scoped lang="less">
+.search-input {
+    position: relative;
+    height: 40px;
+    margin-bottom: 10px;
+}
+
+.search-input>div {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
 .paginations {
     margin-top: 10px;
     text-align: end;
