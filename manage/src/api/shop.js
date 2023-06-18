@@ -1,10 +1,11 @@
 import instance from '@/utils/axios-accept';
 
 export default {
-  getList: () => {
+  getList: (params) => {
     return instance({
-      url: '/shop-list',
+      url: '/api/shop-list',
       method: 'get',
+      params,
     });
   },
 };

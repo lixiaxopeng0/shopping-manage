@@ -1,27 +1,42 @@
 <template>
-    <div class="shopping-list">ShopList</div>
+    <div class="shopping-list">
+        <el-card class="box-card">
+            <div slot="header" class="clearfix">
+                <span>商品列表</span>
+            </div>
+            <ListView :tableData="tableData.data" :total="tableData.total" :columns="columns" @request="getList" />
+        </el-card>
+    </div>
 </template>
 <script>
 import shop from '@/api/shop';
+import ListView from '@/components/List';
+import { columns } from './columns';
+
 export default {
     name: 'ShopList',
+    components: {
+        ListView,
+    },
     data() {
         return {
-            list: [],
+            tableData: [],
+            columns,
         };
     },
     methods: {
-        async getList() {
+        async getList(params) {
             try {
-                const data = await shop.getList();
-                console.log(data, '==data=');
+                console.log(params);
+                const data = await shop.getList(params);
+                this.tableData = data;
             } catch (e) {
-                this.list;
+                this.tableData = { data: [], total: 0 };
             }
         },
     },
-    mounted() {
-        this.getList();
-    }
+    // mounted() {
+    //     this.getList();
+    // }
 };
 </script>

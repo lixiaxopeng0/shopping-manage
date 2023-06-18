@@ -1,38 +1,39 @@
 <template>
     <div>
         <MyHeader class="headers" />
-        <div class="layout">
+        <router-view />
+        <!-- <div class="layout">
             <MyMenu class="menu" @changeCollapse="changeCollapse" />
             <MyContent class="content" :class="{ shrinkage: isCollapse }" />
-        </div>
+        </div> -->
     </div>
 </template>
   
 <script>
-import MyMenu from './MyMenu.vue';
-import MyContent from './MyContent.vue';
+// import MyMenu from './MyMenu.vue';
+// import MyContent from './MyContent.vue';
 import MyHeader from '@/views/MyHeader/index.vue';
 
 export default {
     name: 'MyLayout',
     components: {
-        MyContent,
-        MyMenu,
+        // MyContent,
+        // MyMenu,
         MyHeader,
     },
-    data() {
-        return {
-            isCollapse: false,
-        };
-    },
-    methods: {
-        changeCollapse(value) {
-            this.isCollapse = value;
-        }
-    }
+    // data() {
+    //     return {
+    //         isCollapse: false,
+    //     };
+    // },
+    // methods: {
+    //     changeCollapse(value) {
+    //         this.isCollapse = value;
+    //     }
+    // }
 };
 </script>
-<style scoped lang="less">
+<!-- <style scoped lang="less">
 .layout {
     .menu {
         position: fixed;
@@ -51,5 +52,5 @@ export default {
     }
 
 }
-</style>
+</style> -->
   

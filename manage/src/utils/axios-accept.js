@@ -2,7 +2,8 @@ import axios from 'axios';
 import {ElMessage} from 'element-ui';
 
 const instance = axios.create({
-  baseURL: 'http://192.168.0.104:8100/',
+  // baseURL: 'http://192.168.0.104:8100/',
+  baseURL: '',
   timeout: 5000,
 });
 

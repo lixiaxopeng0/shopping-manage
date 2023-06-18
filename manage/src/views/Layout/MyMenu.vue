@@ -1,7 +1,7 @@
 <template>
     <div>
-        <el-menu default-active="home" class="el-menu-vertical-demo" :collapse="isCollapse" background-color="#545c64"
-            text-color="#fff" active-text-color="#ffd04b" router>
+        <el-menu :default-active="defaultActive" class="el-menu-vertical-demo" :collapse="isCollapse"
+            background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" router>
             <el-menu-item index="home">
                 <i class="iconfont icon-me_zhandianguanli"></i>
                 <span slot="title">商品管理系统</span>
@@ -12,7 +12,7 @@
                     <span slot="title">商品管理</span>
                 </template>
                 <el-menu-item-group>
-                    <span slot="title"></span>
+                    <span slot="title" class="info-title">信息管理</span>
                     <el-menu-item index="shop-list">
                         <i class="iconfont icon-gy_kucunwuziguanli"></i>
                         <span slot="title">商品列表</span>
@@ -32,6 +32,7 @@
 </template>
   
 <script>
+import { BASE_URL } from '@/dicts/route';
 export default {
     name: 'MyMenu',
     // props: [
@@ -43,7 +44,12 @@ export default {
     data() {
         return {
             isCollapse: false,
+            defaultActive: 'home'
         };
+    },
+    created() {
+        this.defaultActive = this.$route.path.split(`${BASE_URL}/`)?.[1];
+        console.log(this.defaultActive);
     },
     methods: {
         handleClick() {
@@ -57,6 +63,10 @@ export default {
 .el-menu-vertical-demo:not(.el-menu--collapse) {
     width: var(--menu-collapse);
     min-height: 400px;
+}
+
+.info-title {
+    color: #ede2e2
 }
 
 .iconfont {
