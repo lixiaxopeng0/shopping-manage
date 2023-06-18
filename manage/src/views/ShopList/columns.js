@@ -38,4 +38,12 @@ export const columns = [
     label: '产品描述',
     tooltip: true,
   },
+  {
+    prop: 'manage',
+    label: '操作',
+    operate: [
+      {name: 'edit', text: '编辑'},
+      {name: 'delete', text: '删除'},
+    ],
+  },
 ];

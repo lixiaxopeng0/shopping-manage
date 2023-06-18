@@ -6,10 +6,14 @@
             </el-input>
         </div>
         <el-table :data="data.tableData" :style="myStyle">
-            <el-table-column v-for="({ label, prop, width = 'auto', render, id, tooltip = false }) in columns" :prop="prop"
+            <el-table-column v-for="({ label, prop, width = 'auto', operate, id, tooltip = false }) in columns" :prop="prop"
                 :label="label" :width="width" v-bind:key="id" :show-overflow-tooltip="tooltip">
                 <template slot-scope="scope">
-                    {{ render ? render(scope) : scope.row[prop] }}
+                    <el-button type="text" size="small" v-for="item in operate" v-show="!!operate"
+                        @click="operatesClick(scope.row, { ...item, refresh, index: scope.$index })" v-bind:key="item.name">
+                        {{ item.text }}
+                    </el-button>
+                    {{ operate ? '' : scope.row[prop] }}
                 </template>
             </el-table-column>
         </el-table>
@@ -59,7 +63,11 @@ export default {
         placeholder: {
             type: String,
             default: '请输入所搜内容'
-        }
+        },
+        // operateClick: {
+        //     type: Function,
+        //     default: null
+        // }
     },
     data() {
         return {
@@ -102,11 +110,27 @@ export default {
         },
     },
     methods: {
+        // 操作事件
+        operatesClick(...props) {
+            this.$emit('operateClick', ...props);
+            // this.operateClick(...props);
+        },
+        // 刷新
+        refresh() {
+            this.currentPage = 1;
+            this.pageSize = 10;
+            this.input = '';
+            this.searchText = '';
+            const params = {
+                page: 1,
+                pageSize: 10,
+            };
+            this.$emit('request', params);
+        },
         clear() {
             this.searchText = '';
         },
         handleEnter() {
-            console.log(this.input);
             if (this.searchName) {
                 this.searchText = this.input;
             }

@@ -8,4 +8,10 @@ export default {
       params,
     });
   },
+  delete: (id) => {
+    return instance({
+      url: `/api/shop-list/${id}/delete`,
+      method: 'DELETE',
+    });
+  },
 };

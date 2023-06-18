@@ -5,7 +5,7 @@
                 <span>商品列表</span>
             </div>
             <ListView :tableData="tableData.data" :total="tableData.total" :columns="columns" @request="getList"
-                :showSearch="true" :searchName="searchName" :placeholder="placeholder" />
+                :showSearch="true" :searchName="searchName" :placeholder="placeholder" @operateClick="operateClick" />
         </el-card>
     </div>
 </template>
@@ -36,6 +36,17 @@ export default {
                 this.tableData = { data: [], total: 0 };
             }
         },
+        operateClick(...props) {
+            switch (props[1]?.name) {
+                case 'delete':
+                    this.handleDelete(...props);
+                    return;
+            }
+        },
+        async handleDelete(item, { refresh }) {
+            await shop.delete(item.id);
+            refresh();
+        }
     },
     // mounted() {
     //     this.getList();

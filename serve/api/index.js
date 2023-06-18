@@ -2,21 +2,24 @@ const express = require('express');
 // const cors = require('cors');
 const Mock = require('mockjs');
 
-let baseList = Mock.mock({
-  'data|34': [
-    {
-      name: Mock.mock('@cname'),
-      id: Mock.mock('@id'),
-      productName: '手机',
-      email: Mock.mock('@email'),
-      'total|100150': 1,
-      'number|1-100': 1,
-      createTime: Mock.mock('@datetime'),
-      updateTime: null,
-      description: Mock.mock('@cparagraph(1, 3)'),
-    },
-  ],
-});
+const getItem = () => {
+  return Mock.mock({
+    'data|1': [
+      {
+        name: Mock.mock('@cname'),
+        id: Mock.mock('@id'),
+        productName: '手机',
+        email: Mock.mock('@email'),
+        'total|100150': 1,
+        'number|1-100': 1,
+        createTime: Mock.mock('@datetime'),
+        updateTime: null,
+        description: Mock.mock('@cparagraph(1, 3)'),
+      },
+    ],
+  }).data;
+};
+let baseList = [...Array.from({length: 10})].map(() => getItem());
 
 const app = express();
 // app.use(
@@ -27,9 +30,8 @@ const app = express();
 // );
 
 app.get('/shop-list', (req, res) => {
-  console.log();
   const {page, pageSize, searchName} = req.query;
-  const list = baseList.data.filter((i) => {
+  const list = baseList.filter((i) => {
     return i?.productName.includes(searchName) || !searchName;
   });
   const start = (page - 1) * pageSize;
@@ -41,7 +43,11 @@ app.get('/shop-list', (req, res) => {
     status: 200,
   });
 });
-
+app.delete('/shop-list/:id/delete', (req, res) => {
+  const id = req.params.id;
+  baseList = baseList.filter((i) => i.id !== id);
+  res.json({data: null, status: 200});
+});
 app.listen(8100, () => {
   console.log('localhost:8100开启服务...');
 });
