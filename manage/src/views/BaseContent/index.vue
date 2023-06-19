@@ -38,6 +38,7 @@ export default {
         bottom: 0;
         background-color: var(--main-color);
         border-top: 1px solid #fff;
+        z-index: 888;
     }
 
     .content {
