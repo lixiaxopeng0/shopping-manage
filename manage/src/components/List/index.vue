@@ -1,6 +1,9 @@
 <template>
     <div>
-        <div class="search-input">
+        <div class="search-input" :class="{ 'only-search': !createText }">
+            <el-button type="primary" icon="el-icon-plus" v-show="!!createText" @click="createClick">
+                {{ createText }}
+            </el-button>
             <el-input :placeholder="placeholder" v-model="input" @keyup.enter.native="handleEnter" clearable
                 style="width: 240px" @clear="clear">
             </el-input>
@@ -63,6 +66,10 @@ export default {
         placeholder: {
             type: String,
             default: '请输入所搜内容'
+        },
+        createText: {
+            type: String,
+            default: '',
         },
         // operateClick: {
         //     type: Function,
@@ -143,6 +150,10 @@ export default {
         },
         sizeChange(value) {
             this.pageSize = value;
+        },
+        // 创建点击
+        createClick() {
+            this.$emit('createClick');
         }
     },
 
@@ -150,16 +161,22 @@ export default {
 </script>
 <style scoped lang="less">
 .search-input {
-    position: relative;
+    // position: relative;
     height: 40px;
     margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
 }
 
-.search-input>div {
-    position: absolute;
-    top: 0;
-    right: 0;
+.only-search {
+    justify-content: flex-end;
 }
+
+// .search-input>div {
+//     position: absolute;
+//     top: 0;
+//     right: 0;
+// }
 
 .paginations {
     margin-top: 10px;

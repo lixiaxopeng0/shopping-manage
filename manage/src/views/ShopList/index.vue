@@ -5,14 +5,15 @@
                 <span>商品列表</span>
             </div>
             <ListView :tableData="tableData.data" :total="tableData.total" :columns="columns" @request="getList"
-                :showSearch="true" :searchName="searchName" :placeholder="placeholder" @operateClick="operateClick" />
+                :showSearch="true" searchName="productName" placeholder="请输入产品名称" @operateClick="operateClick"
+                createText="新建商品" @createClick="createClick" />
         </el-card>
     </div>
 </template>
 <script>
 import shop from '@/api/shop';
 import ListView from '@/components/List';
-import {} from 'element-ui';
+import { } from 'element-ui';
 import { columns } from './columns';
 
 export default {
@@ -24,8 +25,6 @@ export default {
         return {
             tableData: [],
             columns,
-            searchName: 'productName',
-            placeholder: '请输入产品名称'
         };
     },
     methods: {
@@ -46,13 +45,16 @@ export default {
         },
         async handleDelete(item, { refresh }) {
             await shop.delete(item.id);
-              this.$message({
+            this.$message({
                 message: '删除成功',
                 type: 'success',
                 showClose: true,
                 duration: 2000,
             });
             refresh();
+        },
+        createClick() {
+            console.log(12);
         }
     },
     // mounted() {
