@@ -4,9 +4,13 @@ export const columns = [
     label: '产品名称',
     width: 120,
   },
+  // {
+  //   prop: 'id',
+  //   label: '产品ID',
+  // },
   {
-    prop: 'id',
-    label: '产品ID',
+    prop: 'price',
+    label: '产品单价(元)',
   },
   {
     prop: 'name',

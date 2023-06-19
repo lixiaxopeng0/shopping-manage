@@ -6,25 +6,28 @@
             </div>
             <ListView :tableData="tableData.data" :total="tableData.total" :columns="columns" @request="getList"
                 :showSearch="true" searchName="productName" placeholder="请输入产品名称" @operateClick="operateClick"
-                createText="新建商品" @createClick="createClick" />
+                createText="新建商品" @createClick="dialogFormVisible = true" />
         </el-card>
+        <OperateItem :dialogFormVisible="dialogFormVisible" @closeModal="dialogFormVisible = false" />
     </div>
 </template>
 <script>
 import shop from '@/api/shop';
 import ListView from '@/components/List';
-import { } from 'element-ui';
 import { columns } from './columns';
+import OperateItem from './OperateItem.vue';
 
 export default {
     name: 'ShopList',
     components: {
         ListView,
+        OperateItem,
     },
     data() {
         return {
             tableData: [],
             columns,
+            dialogFormVisible: false,
         };
     },
     methods: {
@@ -53,9 +56,6 @@ export default {
             });
             refresh();
         },
-        createClick() {
-            console.log(12);
-        }
     },
     // mounted() {
     //     this.getList();

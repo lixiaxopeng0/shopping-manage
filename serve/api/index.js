@@ -2,7 +2,7 @@ const express = require('express');
 // const cors = require('cors');
 const Mock = require('mockjs');
 const fs = require('fs');
-const CryptoJS = require("crypto-js");
+const CryptoJS = require('crypto-js');
 const bodyParser = require('body-parser');
 
 const getItem = () => {
@@ -18,6 +18,7 @@ const getItem = () => {
         createTime: Mock.mock('@datetime'),
         updateTime: null,
         description: Mock.mock('@cparagraph(1, 3)'),
+        'price|1000-3500': 1,
       },
     ],
   }).data;
@@ -26,7 +27,7 @@ let baseList = [...Array.from({length: 10})].map(() => getItem());
 
 const app = express();
 // 使用 body-parser 中间件
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 // app.use(
 //   cors({
@@ -39,16 +40,19 @@ app.use(bodyParser.json());
 const secretKey = '123#abc-abc#123';
 // 加密
 const encrypt = (pwd) => {
-  const ciphertext = CryptoJS.AES.encrypt(JSON.stringify(pwd), secretKey).toString();
+  const ciphertext = CryptoJS.AES.encrypt(
+    JSON.stringify(pwd),
+    secretKey
+  ).toString();
   return ciphertext;
-}
+};
 // 解密
 // eslint-disable-next-line
 const decrypt = (pwd) => {
-  const bytes  = CryptoJS.AES.decrypt(pwd, secretKey);
+  const bytes = CryptoJS.AES.decrypt(pwd, secretKey);
   const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
   return decryptedData;
-}
+};
 
 // 登录信息
 const userInfoPath = './user.json';
@@ -92,7 +96,10 @@ app.post('/register', (req, res) => {
   if (loginUPwd) {
     responseData = {data: null, status: 300, message: '该用户已存在'};
   } else {
-    fs.writeFileSync(userInfoPath, JSON.stringify({...user_info, [name]: encrypt(password)}));
+    fs.writeFileSync(
+      userInfoPath,
+      JSON.stringify({...user_info, [name]: encrypt(password)})
+    );
     responseData = {data: null, status: 200, message: '注册成功'};
   }
   res.json(responseData);
@@ -116,7 +123,7 @@ app.get('/shop-list', (req, res) => {
 // 列表删除
 app.delete('/shop-list/:id/delete', (req, res) => {
   const id = req.params.id;
-  const index = baseList.findIndex(i => i.id === id);
+  const index = baseList.findIndex((i) => i.id === id);
   if (index >= 0) {
     baseList.splice(index, 1);
     res.json({data: null, status: 200});
@@ -128,7 +135,7 @@ app.delete('/shop-list/:id/delete', (req, res) => {
 // 获取详情
 app.get('/shop-list/:id/detail', (req, res) => {
   const id = req.params.id;
-  const index = baseList.findIndex(i => i.id === id);
+  const index = baseList.findIndex((i) => i.id === id);
   let responseData = {};
   if (index >= 0) {
     responseData = {data: baseList[index], status: 200};
@@ -141,7 +148,7 @@ app.get('/shop-list/:id/detail', (req, res) => {
 // 添加信息
 app.post('/shop-list/add', (req, res) => {
   const data = req.body;
-  const index = baseList.findIndex(i => i.productName === data.productName);
+  const index = baseList.findIndex((i) => i.productName === data.productName);
   if (index >= 0) {
     res.json({data: null, status: 300, message: `${data.productName}已存在`});
   } else {
@@ -156,7 +163,7 @@ app.post('/shop-list/add', (req, res) => {
 // 更新
 app.post('/shop-list/update', (req, res) => {
   const data = req.body;
-  const index = baseList.findIndex(i => i.id === data.id);
+  const index = baseList.findIndex((i) => i.id === data.id);
   let responseData = {};
   if (index >= 0) {
     baseList[index] = {...baseList[index], data};
@@ -169,27 +176,27 @@ app.post('/shop-list/update', (req, res) => {
 
 // 处理classify数据类型，叠加
 const getClassify = (type = 'productName') => {
-    return baseList.reduce((total, item)=> {
-      return {
-        ...total,
-        [item?.[type]]: {
-          // 存在数量
-          totalNumber: (total?.[type]?.totalNumber || 0) + (item?.total || 0),
-          // 剩余数量
-          resetNumber: (total?.[type]?.resetNumber || 0) + (item?.number || 0),
-          // 所有产品
-          product: [...(item?.[type]?.product || []), item?.productName]
-        },
-      }
-    }, {})
-}
+  return baseList.reduce((total, item) => {
+    return {
+      ...total,
+      [item?.[type]]: {
+        // 存在数量
+        totalNumber: (total?.[type]?.totalNumber || 0) + (item?.total || 0),
+        // 剩余数量
+        resetNumber: (total?.[type]?.resetNumber || 0) + (item?.number || 0),
+        // 所有产品
+        product: [...(item?.[type]?.product || []), item?.productName],
+      },
+    };
+  }, {});
+};
 
 // 获取echarts分类数据
 app.get('/shop-list/classify', (req, res) => {
   // 按productName、name比较好
   const type = req.query?.type;
   const result = getClassify(type);
-  res.json({data: result, status: 200})
+  res.json({data: result, status: 200});
 });
 app.listen(8100, () => {
   console.log('localhost:8100开启服务...');
