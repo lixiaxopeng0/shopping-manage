@@ -12,6 +12,7 @@
 <script>
 import shop from '@/api/shop';
 import ListView from '@/components/List';
+import {} from 'element-ui';
 import { columns } from './columns';
 
 export default {
@@ -45,6 +46,12 @@ export default {
         },
         async handleDelete(item, { refresh }) {
             await shop.delete(item.id);
+              this.$message({
+                message: '删除成功',
+                type: 'success',
+                showClose: true,
+                duration: 2000,
+            });
             refresh();
         }
     },
