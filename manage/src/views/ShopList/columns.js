@@ -2,16 +2,16 @@ export const columns = [
   {
     prop: 'productName',
     label: '产品名称',
-    width: 150,
+    width: 120,
   },
   {
     prop: 'id',
     label: '产品ID',
-    width: 180,
   },
   {
     prop: 'name',
     label: '创建人',
+    width: 80,
   },
   {
     prop: 'total',
@@ -21,7 +21,7 @@ export const columns = [
   {
     prop: 'number',
     label: '商品剩余数量',
-    width: 140,
+    width: 120,
   },
   {
     prop: 'createTime',
@@ -41,6 +41,7 @@ export const columns = [
   {
     prop: 'manage',
     label: '操作',
+    width: 100,
     operate: [
       {name: 'edit', text: '编辑'},
       {name: 'delete', text: '删除'},
