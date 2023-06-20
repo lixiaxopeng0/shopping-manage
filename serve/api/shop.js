@@ -1,5 +1,6 @@
 const express = require('express');
 const Mock = require('mockjs');
+const dayjs = require('dayjs')
 const getClassify = require('../utils/getClassify');
 const shopRoute = express.Router();
 
@@ -69,9 +70,11 @@ shopRoute.post('/add', (req, res) => {
     if (index >= 0) {
         res.json({data: null, status: 300, message: `${data.productName}已存在`});
     } else {
-        baseList.push({
-        ...data,
-        id: Mock.mock('@id'),
+        baseList.unshift({
+            ...data,
+            number: data.total,
+            id: Mock.mock('@id'),
+            createTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
         });
         res.json({data: null, status: 200});
     }
