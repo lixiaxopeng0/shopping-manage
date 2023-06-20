@@ -25,6 +25,9 @@ instance.interceptors.request.use(
 // axios相应拦截
 instance.interceptors.response.use(
   (res) => {
+    if (res.data.status > 200) {
+      throw Error(res.data.message);
+    }
     return res.data;
   },
   (e) => {

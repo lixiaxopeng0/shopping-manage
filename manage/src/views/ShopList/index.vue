@@ -6,9 +6,10 @@
             </div>
             <ListView :tableData="tableData.data" :total="tableData.total" :columns="columns" @request="getList"
                 :showSearch="true" searchName="productName" placeholder="请输入产品名称" @operateClick="operateClick"
-                createText="新建商品" @createClick="dialogFormVisible = true" ref="listView" />
+                createText="新建商品" @createClick="createClick" ref="listView" />
         </el-card>
-        <OperateItem :dialogFormVisible="dialogFormVisible" @closeModal="dialogFormVisible = false" @refresh="listRefresh" />
+        <OperateItem :dialogFormVisible="dialogFormVisible" @closeModal="dialogFormVisible = false" @refresh="listRefresh"
+            :resource="resource" :isEdit="isEdit" />
     </div>
 </template>
 <script>
@@ -28,6 +29,8 @@ export default {
             tableData: [],
             columns,
             dialogFormVisible: false,
+            isEdit: false,
+            resource: {},
         };
     },
     methods: {
@@ -43,7 +46,10 @@ export default {
             switch (props[1]?.name) {
                 case 'delete':
                     this.handleDelete(...props);
-                    return;
+                    break;
+                case 'edit':
+                    this.handleEdit(...props);
+                    break;
             }
         },
         async handleDelete(item, { refresh }) {
@@ -55,6 +61,15 @@ export default {
                 duration: 2000,
             });
             refresh();
+        },
+        handleEdit(item) {
+            this.isEdit = true;
+            this.dialogFormVisible = true;
+            this.resource = item;
+        },
+        createClick() {
+            this.dialogFormVisible = true;
+            this.isEdit = false;
         },
         listRefresh() {
             this.$refs.listView.refresh();

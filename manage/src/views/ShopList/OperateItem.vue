@@ -5,7 +5,8 @@
                 <el-input v-model="form.productName" autocomplete="off" :style="myStyle"></el-input>
             </el-form-item>
             <el-form-item label="商品图片" :label-width="formLabelWidth" prop="imageUrl">
-                <el-upload action="none" accept=".jpg,.png,.jpeg" v-model="form.imageUrl" list-type="picture-card" :class="{'one-file': !!form.file}" :auto-upload="false" :limit="1" :on-change="onChange">
+                <el-upload action="none" accept=".jpg,.png,.jpeg" v-model="form.imageUrl" list-type="picture-card"
+                    :class="{ 'one-file': !!form.file }" :auto-upload="false" :limit="1" :on-change="onChange" ref="upload">
                     <i slot="default" class="el-icon-plus"></i>
                     <div slot="file" slot-scope="{file}">
                         <img class="el-upload-list__item-thumbnail" :src="form.imageUrl" alt="">
@@ -58,13 +59,15 @@ export default {
             default: false,
             required: true,
         },
-        title: {
-            type: String,
-            default: '新建商品',
+        isEdit: {
+            type: Boolean,
+            default: false,
         },
     },
     data() {
         return {
+            editBool: false,
+            title: '新建商品',
             formLabelWidth: '120px',
             form: {
                 productName: '',
@@ -82,22 +85,22 @@ export default {
             rules: {
                 productName: [
                     { required: true, message: '请输入商品名称', trigger: 'blur' },
-                    {  min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' },
+                    { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' },
                 ],
                 total: [
                     { type: 'integer', required: true, message: '请输入商品数量', trigger: 'blur' },
                     { validator: this.checkNumber, min: 1, max: 1000, message: '数值在1-1000', trigger: 'blur' },
                 ],
                 price: [
-                    {type: 'number', required: true, message: '请输入商品单价', trigger: 'blur' },
-                    {validator: this.checkNumber, min: 1, max: 1000000, message: '数值在1-1000000', trigger: 'blur' },
+                    { type: 'number', required: true, message: '请输入商品单价', trigger: 'blur' },
+                    { validator: this.checkNumber, min: 1, max: 1000000, message: '数值在1-1000000', trigger: 'blur' },
                 ],
                 imageUrl: [
                     { required: true, message: '请选择商品图片', trigger: 'blur' },
                 ],
                 description: [
                     { required: true, message: '请输入商品描述', trigger: 'blur' },
-                    {  min: 1, max: 1000, message: '长度在 2 到 1000 个字符', trigger: 'blur' },
+                    { min: 1, max: 1000, message: '长度在 2 到 1000 个字符', trigger: 'blur' },
                 ],
             }
         };
@@ -105,11 +108,18 @@ export default {
     watch: {
         dialogFormVisible(value) {
             this.visible = value;
+        },
+        resource(value) {
+            this.form = { imageUrl: '', ...value };
+        },
+        isEdit(value) {
+            this.title = value ? '编辑商品' : '新建商品';
+            this.editBool = value;
         }
     },
     methods: {
         checkNumber(rule, value, callback) {
-            const {min, max, message} = rule;
+            const { min, max, message } = rule;
             if (min <= value && value <= max) {
                 callback();
             } else {
@@ -126,7 +136,9 @@ export default {
                 imageUrl: '',
                 name: '',
             };
+            this.editBool = false;
             this.$refs[formName || 'ruleForm'].resetFields();
+            this.$refs.upload.clearFiles();
             this.$emit('closeModal');
         },
         // upload的onChange
@@ -138,35 +150,47 @@ export default {
                     formData.append(key, file.raw[key]);
                 }
             });
-            this.form.file = JSON.stringify(formData);
+            this.form.file = formData;
+            console.log(file, this.form.imageUrl);
+
         },
         handleRemove() {
             this.form.file = null;
             this.form.imageUrl = '';
+            this.$refs.upload.clearFiles();
         },
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     this.$data.form = { ...this.form };
-                    this.$message({
-                        type: 'success',
-                        message: '创建成功',
-                        showClose: true,
-                        duration: 2000
-                    });
-                    this.create(this.form);
+                    this.onOk(this.form);
                 } else {
                     return false;
                 }
             });
         },
-        async create(data) {
+        async onOk(data) {
             try {
-                await shop.post(data);
+                if (this.editBool) {
+                    await shop.update(data);
+                } else {
+                    await shop.post(data);
+                }
+                this.$message({
+                    type: 'success',
+                    message: this.editBool ? '更新成功' : '创建成功',
+                    showClose: true,
+                    duration: 2000
+                });
                 this.close();
                 this.$emit('refresh');
             } catch (e) {
-                console.log(e?.message)
+                this.$message({
+                    type: 'warning',
+                    message: e?.message,
+                    showClose: true,
+                    duration: 2000
+                });
             }
         }
         // resetForm(formName) {
