@@ -6,9 +6,9 @@
             </div>
             <ListView :tableData="tableData.data" :total="tableData.total" :columns="columns" @request="getList"
                 :showSearch="true" searchName="productName" placeholder="请输入产品名称" @operateClick="operateClick"
-                createText="新建商品" @createClick="dialogFormVisible = true" />
+                createText="新建商品" @createClick="dialogFormVisible = true" ref="listView" />
         </el-card>
-        <OperateItem :dialogFormVisible="dialogFormVisible" @closeModal="dialogFormVisible = false" />
+        <OperateItem :dialogFormVisible="dialogFormVisible" @closeModal="dialogFormVisible = false" @refresh="listRefresh" />
     </div>
 </template>
 <script>
@@ -56,6 +56,9 @@ export default {
             });
             refresh();
         },
+        listRefresh() {
+            this.$refs.listView.refresh();
+        }
     },
     // mounted() {
     //     this.getList();
