@@ -8,6 +8,7 @@ import {BASE_URL} from '@/dicts/route';
 
 const ShopList = () => import('@/views/ShopList/index.vue');
 const ShopMonitoring = () => import('@/views/ShopMonitoring/index.vue');
+const ItemDetail = () => import('@/views/ItemDetail/index.vue');
 
 Vue.use(VueRouter);
 
@@ -40,6 +41,11 @@ const routes = [
             component: ShopMonitoring,
           },
         ],
+      },
+      {
+        path: ':id/detail',
+        name: 'ItemDetail',
+        component: ItemDetail,
       },
     ],
   },

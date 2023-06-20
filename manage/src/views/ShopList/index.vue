@@ -50,6 +50,9 @@ export default {
                 case 'edit':
                     this.handleEdit(...props);
                     break;
+                case 'link':
+                    this.handleLink(...props);
+                    break;
             }
         },
         async handleDelete(item, { refresh }) {
@@ -79,6 +82,10 @@ export default {
         createClick() {
             this.dialogFormVisible = true;
             this.isEdit = false;
+        },
+        handleLink({ id }) {
+            console.log(id);
+            this.$router.push(`/${id}/detail`);
         },
         listRefresh() {
             this.$refs.listView.refresh();

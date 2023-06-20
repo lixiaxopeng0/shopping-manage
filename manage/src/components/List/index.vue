@@ -19,7 +19,7 @@
                 <template slot-scope="scope">
                     <el-button type="text" size="small" v-for="item in operate" v-show="!!operate"
                         @click="operatesClick(scope.row, { ...item, refresh, index: scope.$index })" v-bind:key="item.name">
-                        {{ item.text }}
+                        {{ item.isLink ? scope.row[prop] : item.text }}
                     </el-button>
                     {{ operate ? '' : (scope.row[prop] ?? '-') }}
                 </template>

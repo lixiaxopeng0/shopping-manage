@@ -3,6 +3,7 @@ export const columns = [
     prop: 'productName',
     label: '产品名称',
     width: 120,
+    operate: [{name: 'link', isLink: true, text: ''}],
   },
   // {
   //   prop: 'id',
