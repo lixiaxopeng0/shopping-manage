@@ -4,9 +4,13 @@
             <el-button type="primary" icon="el-icon-plus" v-show="!!createText" @click="createClick">
                 {{ createText }}
             </el-button>
-            <el-input :placeholder="placeholder" v-model="input" @keyup.enter.native="handleEnter" clearable
-                style="width: 240px" @clear="clear">
-            </el-input>
+            <div>
+                <el-input :placeholder="placeholder" v-model="input" @keyup.enter.native="handleEnter" clearable
+                style="width: 240px" @clear="clear" v-show="!!showSearch">
+                </el-input>
+                <el-button icon="el-icon-refresh" style="margin-left: 10px" v-show="!!canRefresh" @click="refresh('button')"></el-button>
+            </div>
+            
         </div>
         <el-table :data="data.tableData" :style="myStyle">
             <el-table-column v-for="({ label, prop, width = 'auto', operate, id, tooltip = false }) in columns" :prop="prop"
@@ -71,6 +75,10 @@ export default {
             type: String,
             default: '',
         },
+        canRefresh: {
+            type: Boolean,
+            default: false,
+        }
         // operateClick: {
         //     type: Function,
         //     default: null
@@ -87,6 +95,7 @@ export default {
             showPaginations: false,
             input: '',
             searchText: '',
+            // loading: false,
         };
     },
     watch: {
@@ -123,7 +132,7 @@ export default {
             // this.operateClick(...props);
         },
         // 刷新
-        refresh() {
+        async refresh() {
             this.currentPage = 1;
             this.pageSize = 10;
             this.input = '';
