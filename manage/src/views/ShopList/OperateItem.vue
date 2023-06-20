@@ -1,41 +1,43 @@
 <template>
-    <el-dialog title="收货地址" :visible.sync="visible" @close="close" width="500px">
-        <el-form :model="form">
-            <el-form-item label="产品名称" :label-width="formLabelWidth">
+    <el-dialog :title="title" :visible.sync="visible" @close="close" width="500px">
+        <el-form :model="form" :rules="rules" ref="ruleForm" class="demo-ruleForm">
+            <el-form-item label="商品名称" :label-width="formLabelWidth" prop="productName">
                 <el-input v-model="form.productName" autocomplete="off" :style="myStyle"></el-input>
             </el-form-item>
-            <el-form-item label="商品图片" :label-width="formLabelWidth">
-                <el-upload action="#" list-type="picture-card" :auto-upload="false" :limit="1" :on-success="onSuccess">
+            <el-form-item label="商品图片" :label-width="formLabelWidth" prop="imageUrl">
+                <el-upload action="none" accept=".jpg,.png,.jpeg" v-model="form.imageUrl" list-type="picture-card" :class="{'one-file': !!form.file}" :auto-upload="false" :limit="1" :on-change="onChange">
                     <i slot="default" class="el-icon-plus"></i>
                     <div slot="file" slot-scope="{file}">
-                        <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
+                        <img class="el-upload-list__item-thumbnail" :src="form.imageUrl" alt="">
                         <span class="el-upload-list__item-actions ">
-                            <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleRemove(file)">
+                            <span class="el-upload-list__item-delete" @click="handleRemove(file)">
                                 <i class="el-icon-delete"></i>
                             </span>
                         </span>
                     </div>
                 </el-upload>
             </el-form-item>
-            <el-form-item label="商品单价" :label-width="formLabelWidth">
+            <el-form-item label="商品单价" :label-width="formLabelWidth" prop="price">
                 <el-input-number v-model="form.price" :step="1" :precision="0" :min="1" label="商品单价"
                     :style="myStyle"></el-input-number>
             </el-form-item>
-            <el-form-item label="商品数量" :label-width="formLabelWidth">
+            <el-form-item label="商品数量" :label-width="formLabelWidth" prop="total">
                 <el-input-number v-model="form.total" :step="1" :precision="0" :min="1" label="商品数量"
                     :style="myStyle"></el-input-number>
             </el-form-item>
-            <el-form-item label="活动形式" :label-width="formLabelWidth">
+            <el-form-item label="商品描述" :label-width="formLabelWidth" prop="description">
                 <el-input type="textarea" v-model="form.description" :style="myStyle"></el-input>
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-            <el-button @click="close">取 消</el-button>
-            <el-button type="primary" @click="close">确 定</el-button>
+            <el-button @click="close('ruleForm')">取 消</el-button>
+            <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
         </div>
     </el-dialog>
 </template>
 <script>
+import shop from '@/api/shop';
+
 export default {
     name: 'OperateItem',
     props: {
@@ -48,6 +50,7 @@ export default {
                 createTime: null,
                 description: '',
                 price: 0,
+                imageUrl: '',
             }),
         },
         dialogFormVisible: {
@@ -55,27 +58,48 @@ export default {
             default: false,
             required: true,
         },
-        // dialogFormVisible: {
-        //     type: Boolean,
-        //     default: false,
-        //     required: true,
-        // },
+        title: {
+            type: String,
+            default: '新建商品',
+        },
     },
     data() {
         return {
             formLabelWidth: '120px',
             form: {
                 productName: '',
-                name: '',
                 total: '',
-                createTime: null,
                 description: '',
                 price: 0,
-                file: '',
+                file: null,
+                imageUrl: '',
+                // 创建人
+                name: '',
             },
-            disabled: false,
+            // disabled: false,
             visible: false,
-            myStyle: { width: '240px' }
+            myStyle: { width: '240px' },
+            rules: {
+                productName: [
+                    { required: true, message: '请输入商品名称', trigger: 'blur' },
+                    {  min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' },
+                ],
+                total: [
+                    { type: 'integer', required: true, message: '请输入商品数量', trigger: 'blur' },
+                    { validator: this.checkNumber, min: 1, max: 1000, message: '数值在1-1000', trigger: 'blur' },
+                ],
+                price: [
+                    {type: 'number', required: true, message: '请输入商品单价', trigger: 'blur' },
+                    {validator: this.checkNumber, min: 1, max: 1000000, message: '数值在1-1000000', trigger: 'blur' },
+                ],
+                imageUrl: [
+                    { required: true, message: '请选择商品图片', trigger: 'blur' },
+                ],
+                description: [
+                    { required: true, message: '请输入商品描述', trigger: 'blur' },
+                    {  min: 1, max: 1000, message: '长度在 2 到 1000 个字符', trigger: 'blur' },
+                ],
+            }
         };
     },
     watch: {
@@ -84,19 +108,76 @@ export default {
         }
     },
     methods: {
-        close() {
+        checkNumber(rule, value, callback) {
+            const {min, max, message} = rule;
+            if (min <= value && value <= max) {
+                callback();
+            } else {
+                callback(new Error(message));
+            }
+        },
+        close(formName) {
+            this.form = {
+                productName: '',
+                total: '',
+                description: '',
+                price: 0,
+                file: null,
+                imageUrl: '',
+                name: '',
+            };
+            this.$refs[formName || 'ruleForm'].resetFields();
             this.$emit('closeModal');
         },
-        onSuccess(res, file) {
-            this.imageUrl = URL.createObjectURL(file.raw);
-            this.form.file = file;
+        // upload的onChange
+        onChange(file) {
+            this.form.imageUrl = URL.createObjectURL(file.raw);
+            const formData = new FormData();
+            Object.keys(file.raw).forEach((key) => {
+                if (file.raw[key]) {
+                    formData.append(key, file.raw[key]);
+                }
+            });
+            this.form.file = JSON.stringify(formData);
         },
         handleRemove() {
             this.form.file = null;
+            this.form.imageUrl = '';
+        },
+        submitForm(formName) {
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    this.$data.form = { ...this.form };
+                    this.$message({
+                        type: 'success',
+                        message: '创建成功',
+                        showClose: true,
+                        duration: 2000
+                    });
+                    this.create(this.form);
+                } else {
+                    return false;
+                }
+            });
+        },
+        async create(data) {
+            try {
+                await shop.post(data);
+                this.close();
+                this.$emit('refresh');
+            } catch (e) {
+                console.log(e?.message)
+            }
         }
+        // resetForm(formName) {
+        //     this.$refs[formName].resetFields();
+        //     // this.close();
+        // }
     }
 };
 </script>
 <style scoped lang="less">
-.one-file {}
+::v-deep .one-file .el-upload {
+    display: none;
+}
 </style>
