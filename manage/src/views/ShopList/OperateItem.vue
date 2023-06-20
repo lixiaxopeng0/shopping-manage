@@ -186,7 +186,7 @@ export default {
                 this.$emit('refresh');
             } catch (e) {
                 this.$message({
-                    type: 'warning',
+                    type: 'error',
                     message: e?.message,
                     showClose: true,
                     duration: 2000

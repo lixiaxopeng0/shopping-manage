@@ -6,11 +6,12 @@
             </el-button>
             <div>
                 <el-input :placeholder="placeholder" v-model="input" @keyup.enter.native="handleEnter" clearable
-                style="width: 240px" @clear="clear" v-show="!!showSearch">
+                    style="width: 240px" @clear="clear" v-show="!!showSearch">
                 </el-input>
-                <el-button icon="el-icon-refresh" style="margin-left: 10px" v-show="!!canRefresh" @click="refresh('button')"></el-button>
+                <el-button icon="el-icon-refresh" style="margin-left: 10px" v-show="!!canRefresh"
+                    @click="refresh('button')"></el-button>
             </div>
-            
+
         </div>
         <el-table :data="data.tableData" :style="myStyle">
             <el-table-column v-for="({ label, prop, width = 'auto', operate, id, tooltip = false }) in columns" :prop="prop"
@@ -20,7 +21,7 @@
                         @click="operatesClick(scope.row, { ...item, refresh, index: scope.$index })" v-bind:key="item.name">
                         {{ item.text }}
                     </el-button>
-                    {{ operate ? '' : scope.row[prop] }}
+                    {{ operate ? '' : (scope.row[prop] ?? '-') }}
                 </template>
             </el-table-column>
         </el-table>

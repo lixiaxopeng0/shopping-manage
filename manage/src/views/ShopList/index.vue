@@ -53,14 +53,23 @@ export default {
             }
         },
         async handleDelete(item, { refresh }) {
-            await shop.delete(item.id);
-            this.$message({
-                message: '删除成功',
-                type: 'success',
-                showClose: true,
-                duration: 2000,
-            });
-            refresh();
+            try {
+                await shop.delete(item.id);
+                this.$message({
+                    message: '删除成功',
+                    type: 'success',
+                    showClose: true,
+                    duration: 2000,
+                });
+                refresh();
+            } catch (e) {
+                this.$message({
+                    message: e?.message,
+                    type: 'error',
+                    showClose: true,
+                    duration: 2000,
+                });
+            }
         },
         handleEdit(item) {
             this.isEdit = true;
