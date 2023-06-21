@@ -32,4 +32,11 @@ export default {
       data,
     });
   },
+  // 获取详情数据
+  detail: (id) => {
+    return instance({
+      url: `/api/shop-list/${id}/detail`,
+      method: 'GET',
+    });
+  },
 };
