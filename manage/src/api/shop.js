@@ -30,6 +30,8 @@ export default {
       url: '/api/shop-list/update',
       method: 'POST',
       data,
+      //必须false才会自动加上正确的Content-Type
+      contentType: false,
     });
   },
   // 获取详情数据

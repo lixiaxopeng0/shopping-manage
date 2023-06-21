@@ -7,23 +7,39 @@
                     <span>商品详情</span>
                 </div>
                 <div class="detail-info">
-                    <div class="image" :class="{ 'on-image': !info.imageUrl}">
-                        <img :src="info.imageUrl" />
+                    <div class="image" :class="{ 'one-image': !info.imageUrl }">
+                        <img :src="info.imageUrl" alt="暂时商品图片" />
                     </div>
                     <div class="info">
                         <el-row :gutter="10">
-                            <el-col :span="8"><ShowField label="产品名称">{{ info.productName }}</ShowField></el-col>
-                            <el-col :span="8"><ShowField label="创建人">{{ info.name }}</ShowField></el-col>
-                            <el-col :span="8"><ShowField label="商品单价(元)">{{ info.price }}</ShowField></el-col>
+                            <el-col :span="8">
+                                <ShowField label="产品名称">{{ info.productName }}</ShowField>
+                            </el-col>
+                            <el-col :span="8">
+                                <ShowField label="创建人">{{ info.name }}</ShowField>
+                            </el-col>
+                            <el-col :span="8">
+                                <ShowField label="商品单价(元)">{{ info.price }}</ShowField>
+                            </el-col>
                         </el-row>
                         <el-row :gutter="10">
-                            <el-col :span="8"><ShowField label="商品数量">{{ info.total }}</ShowField></el-col>
-                            <el-col :span="8"><ShowField label="商品剩余数量">{{ info.number }}</ShowField></el-col>
-                            <el-col :span="8"><ShowField label="上传时间">{{info.createTime}}</ShowField></el-col>
+                            <el-col :span="8">
+                                <ShowField label="商品数量">{{ info.total }}</ShowField>
+                            </el-col>
+                            <el-col :span="8">
+                                <ShowField label="商品剩余数量">{{ info.number }}</ShowField>
+                            </el-col>
+                            <el-col :span="8">
+                                <ShowField label="上传时间">{{ info.createTime }}</ShowField>
+                            </el-col>
                         </el-row>
                         <el-row :gutter="10">
-                            <el-col :span="8"><ShowField label="更新时间">{{ info.updateTime ?? '-' }}</ShowField></el-col>
-                            <el-col :span="16"><ShowField label="产品描述">{{ info.description }}</ShowField></el-col>
+                            <el-col :span="8">
+                                <ShowField label="更新时间">{{ info.updateTime ?? '-' }}</ShowField>
+                            </el-col>
+                            <el-col :span="16">
+                                <ShowField label="产品描述">{{ info.description }}</ShowField>
+                            </el-col>
                         </el-row>
                     </div>
                 </div>
@@ -42,50 +58,49 @@ export default {
         ShowField,
         PageHeader,
     },
-    data(){
+    data() {
         return {
             info: {
                 productName: '',
-                name:'',
+                name: '',
                 price: '',
                 total: '',
-                number:'',
+                number: '',
                 createTime: '',
                 updateTime: '',
                 imageUrl: '',
             },
         };
     },
-    mounted(){
+    mounted() {
         this.getDetail();
     },
     methods: {
-        onBack(){
+        onBack() {
             this.$router.push('/base/shop-list');
         },
         async getDetail() {
-            const {id} = this.$route.params;
+            const { id } = this.$route.params;
             try {
-                const {data} = await shop.detail(id);
-                this.info = {imageUrl: '', ...data};
+                const { data } = await shop.detail(id);
+                this.info = { imageUrl: '', ...data };
             } catch (e) {
                 this.info = {
                     productName: '',
-                    name:'',
+                    name: '',
                     price: '',
                     total: '',
-                    number:'',
+                    number: '',
                     createTime: '',
                     updateTime: ''
                 };
             }
         }
     }
-    
+
 };
 </script>
 <style scoped lang="less">
-
 .detail-info {
     display: flex;
 
@@ -93,8 +108,13 @@ export default {
         height: 220px;
         width: 200px;
         margin-right: 10px;
+
+        img {
+            width: 200px;
+        }
     }
-    .on-image {
+
+    .one-image {
         // background: #b7b6b6;
         border: 1px solid #b7b6b6;
     }
@@ -103,5 +123,4 @@ export default {
         flex: 1;
     }
 }
-
 </style>

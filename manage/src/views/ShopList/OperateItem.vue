@@ -6,7 +6,8 @@
             </el-form-item>
             <el-form-item label="商品图片" :label-width="formLabelWidth" prop="imageUrl">
                 <el-upload action="none" accept=".jpg,.png,.jpeg" v-model="form.imageUrl" list-type="picture-card"
-                    :class="{ 'one-file': !!form.file }" :auto-upload="false" :limit="1" :on-change="onChange" ref="upload">
+                    :class="{ 'one-file': !!form.imageUrl }" :auto-upload="false" :limit="1" :on-change="onChange"
+                    ref="upload" :file-list="fileList">
                     <i slot="default" class="el-icon-plus"></i>
                     <div slot="file" slot-scope="{file}">
                         <img class="el-upload-list__item-thumbnail" :src="form.imageUrl" alt="">
@@ -79,6 +80,7 @@ export default {
                 // 创建人
                 name: '',
             },
+            fileList: [],
             // disabled: false,
             visible: false,
             myStyle: { width: '240px' },
@@ -110,7 +112,11 @@ export default {
             this.visible = value;
         },
         resource(value) {
+            // this.$nextTick(() => {
+            // });
             this.form = { imageUrl: '', ...value };
+            console.log(this.form.imageUrl);
+            this.fileList = [{ url: this.form.imageUrl, name: '' }];
         },
         isEdit(value) {
             this.title = value ? '编辑商品' : '新建商品';
@@ -136,6 +142,7 @@ export default {
                 imageUrl: '',
                 name: '',
             };
+            this.fileList = [];
             this.editBool = false;
             this.$refs[formName || 'ruleForm'].resetFields();
             this.$refs.upload.clearFiles();
@@ -165,15 +172,14 @@ export default {
         },
         async onOk(formdata) {
             try {
-                const {file, ...props} = formdata;
+                const { file, ...props } = formdata;
                 const formData = new FormData();
-                Object.keys(file.raw).forEach((key) => {
-                    if (file.raw[key]) {
-                        formData.append(key, file.raw[key]);
+                Object.keys(file).forEach((key) => {
+                    if (file[key]) {
+                        formData.append(key, file[key]);
                     }
                 });
-                formData.append('result', props);
-                console.log(Object.prototype.toString.call(formData))
+                formData.append('result', JSON.stringify(props));
                 if (this.editBool) {
                     await shop.update(formData);
                 } else {

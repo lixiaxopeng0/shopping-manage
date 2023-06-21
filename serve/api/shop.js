@@ -1,7 +1,11 @@
 const express = require('express');
 const Mock = require('mockjs');
 const dayjs = require('dayjs');
+const multiparty = require('multiparty');
 const getClassify = require('../utils/getClassify');
+const fs = require('fs');
+const path = require('path');
+
 const shopRoute = express.Router();
 
 // 当前时间
@@ -64,22 +68,38 @@ shopRoute.get('/:id/detail', (req, res) => {
   }
   res.json(responseData);
 });
-
 // 添加信息
 shopRoute.post('/add', (req, res) => {
-  const data = req.body;
-  const index = baseList.findIndex((i) => i.productName === data.productName);
-  if (index >= 0) {
-    res.json({data: null, status: 300, message: `${data.productName}已存在`});
-  } else {
-    baseList.unshift({
-      ...data,
-      number: data.total,
-      id: Mock.mock('@id'),
-      createTime: nowMoment(),
-    });
-    res.json({data: null, status: 200});
-  }
+  var form = new multiparty.Form();
+  form.parse(req, function (err, fields, file) {
+    const data = JSON.parse(fields.result[0]);
+    const index = baseList.findIndex((i) => i.productName === data.productName);
+    if (index >= 0) {
+      res.json({data: null, status: 300, message: `${data.productName}已存在`});
+    } else {
+      const [{originalFilename, path: tempPath}] = file.raw;
+      // 生成新的文件名
+      const newFileName = `${Date.now()}-${originalFilename}`;
+      const newFilePath = path.join(__dirname, '../public/images', newFileName);
+
+      // 将临时文件保存到新位置
+      const readStream = fs.createReadStream(tempPath);
+      const writeStream = fs.createWriteStream(newFilePath);
+
+      readStream.pipe(writeStream);
+      writeStream.on('close', () => {
+        const imageUrl = `http://localhost:8100/images/${newFileName}`;
+        baseList.unshift({
+          ...data,
+          number: data.total,
+          id: Mock.mock('@id'),
+          createTime: nowMoment(),
+          imageUrl,
+        });
+        res.json({data: null, status: 200});
+      });
+    }
+  });
 });
 
 // 更新
