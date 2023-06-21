@@ -49,7 +49,15 @@ export default {
     },
     created() {
         this.defaultActive = this.$route.path.split(`${BASE_URL}/`)?.[1];
-        // console.log(this.defaultActive);
+    },
+    mounted() {
+        this.$router.afterEach((to) => {
+            if (to.path.includes(BASE_URL)) {
+                this.$nextTick(() => {
+                    this.defaultActive = to.path.split(`${BASE_URL}/`)?.[1];
+                })
+            }
+        })
     },
     methods: {
         handleClick() {
