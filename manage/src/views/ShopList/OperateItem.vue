@@ -144,14 +144,8 @@ export default {
         // upload的onChange
         onChange(file) {
             this.form.imageUrl = URL.createObjectURL(file.raw);
-            const formData = new FormData();
-            Object.keys(file.raw).forEach((key) => {
-                if (file.raw[key]) {
-                    formData.append(key, file.raw[key]);
-                }
-            });
-            this.form.file = formData;
-            console.log(file, this.form.imageUrl);
+            this.form.file = file;
+            // console.log(file, this.form.imageUrl);
 
         },
         handleRemove() {
@@ -169,12 +163,21 @@ export default {
                 }
             });
         },
-        async onOk(data) {
+        async onOk(formdata) {
             try {
+                const {file, ...props} = formdata;
+                const formData = new FormData();
+                Object.keys(file.raw).forEach((key) => {
+                    if (file.raw[key]) {
+                        formData.append(key, file.raw[key]);
+                    }
+                });
+                formData.append('result', props);
+                console.log(Object.prototype.toString.call(formData))
                 if (this.editBool) {
-                    await shop.update(data);
+                    await shop.update(formData);
                 } else {
-                    await shop.post(data);
+                    await shop.post(formData);
                 }
                 this.$message({
                     type: 'success',
