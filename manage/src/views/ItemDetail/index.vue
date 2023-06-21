@@ -1,9 +1,6 @@
 <template>
     <div>
-        <el-row>
-            <el-col :span="24"><div class="detail-header">xxx</div></el-col>
-        </el-row>
-        
+        <PageHeader @onBack="onBack">返回商品列表</PageHeader>
         <div class="detail-content">
             <el-card class="box-card">
                 <div slot="header">
@@ -37,11 +34,13 @@
 <script>
 import ShowField from './ShowField.vue';
 import shop from '@/api/shop';
+import PageHeader from '@/components/PageHeader/index.vue';
 
 export default {
     name: 'ItemDetail',
     components: {
         ShowField,
+        PageHeader,
     },
     data(){
         return {
@@ -61,6 +60,9 @@ export default {
         this.getDetail();
     },
     methods: {
+        onBack(){
+            this.$router.push('/base/shop-list');
+        },
         async getDetail() {
             const {id} = this.$route.params;
             try {
@@ -83,12 +85,6 @@ export default {
 };
 </script>
 <style scoped lang="less">
-.detail-header {
-    height: 50px;
-    border-bottom: 1px solid #f4f2f2;
-    box-shadow: 3px 3px 10px 0px #b7b6b6;
-    margin-bottom: 10px;
-}
 
 .detail-info {
     display: flex;
