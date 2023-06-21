@@ -1,7 +1,7 @@
 export const columns = [
   {
     prop: 'productName',
-    label: '产品名称',
+    label: '商品名称',
     width: 120,
     operate: [{name: 'link', isLink: true, text: ''}],
   },
@@ -10,13 +10,13 @@ export const columns = [
   //   label: '产品ID',
   // },
   {
-    prop: 'price',
-    label: '产品单价(元)',
-  },
-  {
     prop: 'name',
     label: '创建人',
     width: 80,
+  },
+    {
+    prop: 'price',
+    label: '商品单价(元)',
   },
   {
     prop: 'total',
@@ -40,7 +40,7 @@ export const columns = [
   },
   {
     prop: 'description',
-    label: '产品描述',
+    label: '商品描述',
     tooltip: true,
   },
   {
