@@ -55,10 +55,10 @@ shopRoute.delete('/:id/delete', (req, res) => {
 // 获取详情
 shopRoute.get('/:id/detail', (req, res) => {
   const id = req.params.id;
-  const index = baseList.findIndex((i) => i.id === id);
+  const detail = baseList.find((i) => i.id === id);
   let responseData = {};
-  if (index >= 0) {
-    responseData = {data: baseList[index], status: 200};
+  if (detail) {
+    responseData = {data: detail, status: 200};
   } else {
     responseData = {data: null, status: 300, message: '数据不存在'};
   }
