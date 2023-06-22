@@ -4,9 +4,17 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {},
+  state: {
+    token: localStorage.getItem('token') ? localStorage.getItem('token') : '',
+  },
   getters: {},
-  mutations: {},
+  mutations: {
+    // 修改token，并将token存入localStorage
+    setToken(state, user) {
+      state.token = user.token;
+      localStorage.setItem('token', user.token);
+    },
+  },
   actions: {},
   modules: {},
 });

@@ -37,6 +37,9 @@
 </template>
 <script>
 import shop from '@/api/shop';
+// import store from '@/store/index';
+import { mapMutations } from "vuex";
+
 export default {
     name: 'LoginView',
     data() {
@@ -52,6 +55,7 @@ export default {
         };
     },
     methods: {
+        ...mapMutations(['setToken']),
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
@@ -64,15 +68,19 @@ export default {
         },
         async onOk(formName) {
             try {
+                let token = '';
                 const isLogin = this.activeName === 'login';
                 if (this.form.password !== this.form.checkPass && !isLogin) {
                     throw Error('确认密码不正确');
                 }
                 if (isLogin) {
-                    await shop.login(this.form);
+                    const { data } = await shop.login(this.form);
+                    token = data;
                 } else {
-                    await shop.register(this.form);
+                    const { data } = await shop.register(this.form);
+                    token = data;
                 }
+                this.setToken({ token });
                 this.resetForm(formName);
                 this.$message({
                     type: 'success',

@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs');
+const jwtToekn = require('../utils/jwtToken');
 const shopRoute = require('./shop');
 const userRoute = require('./user');
 
@@ -12,6 +13,7 @@ const app = express();
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(express.static(staticPath));
+app.use(jwtToekn);
 app.use('/shop-list', shopRoute);
 app.use('/user', userRoute);
 // app.use(
