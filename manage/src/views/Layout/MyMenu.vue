@@ -3,8 +3,8 @@
         <el-menu :default-active="defaultActive" class="el-menu-vertical-demo" :collapse="isCollapse"
             background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" router>
             <el-menu-item index="home">
-                <i class="iconfont icon-me_zhandianguanli"></i>
-                <span slot="title">商品管理系统</span>
+                <i class="iconfont icon-gy_xitongzonglan"></i>
+                <span slot="title">概览</span>
             </el-menu-item>
             <el-submenu index="shop">
                 <template slot="title">
@@ -55,9 +55,9 @@ export default {
             if (to.path.includes(BASE_URL)) {
                 this.$nextTick(() => {
                     this.defaultActive = to.path.split(`${BASE_URL}/`)?.[1];
-                })
+                });
             }
-        })
+        });
     },
     methods: {
         handleClick() {
