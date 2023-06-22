@@ -55,4 +55,10 @@ export default {
       data,
     });
   },
+  exit: () => {
+    return instance({
+      url: '/api/user/exit',
+      method: 'POST',
+    });
+  },
 };

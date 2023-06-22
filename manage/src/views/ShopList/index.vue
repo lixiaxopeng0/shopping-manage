@@ -40,6 +40,12 @@ export default {
                 this.tableData = data;
             } catch (e) {
                 this.tableData = { data: [], total: 0 };
+                this.$message({
+                    message: e?.message,
+                    type: 'error',
+                    showClose: true,
+                    duration: 2000,
+                });
             }
         },
         operateClick(...props) {

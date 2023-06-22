@@ -56,6 +56,7 @@ export default {
     },
     methods: {
         ...mapMutations(['setToken']),
+        ...mapMutations(['setUserInfo']),
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
@@ -68,19 +69,20 @@ export default {
         },
         async onOk(formName) {
             try {
-                let token = '';
+                let result = {};
                 const isLogin = this.activeName === 'login';
                 if (this.form.password !== this.form.checkPass && !isLogin) {
                     throw Error('确认密码不正确');
                 }
                 if (isLogin) {
                     const { data } = await shop.login(this.form);
-                    token = data;
+                    result = data;
                 } else {
                     const { data } = await shop.register(this.form);
-                    token = data;
+                    result = data;
                 }
-                this.setToken({ token });
+                this.setToken({ ...result });
+                this.setUserInfo({ login: true, ...result });
                 this.resetForm(formName);
                 this.$message({
                     type: 'success',
