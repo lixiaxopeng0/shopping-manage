@@ -41,4 +41,18 @@ export default {
       method: 'GET',
     });
   },
+  login: (data) => {
+    return instance({
+      url: '/api/user/login',
+      method: 'POST',
+      data,
+    });
+  },
+  register: (data) => {
+    return instance({
+      url: '/api/user/register',
+      method: 'POST',
+      data,
+    });
+  },
 };
