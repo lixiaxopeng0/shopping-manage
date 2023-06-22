@@ -115,7 +115,6 @@ export default {
     }
 
     .one-image {
-        // background: #b7b6b6;
         border: 1px solid #b7b6b6;
     }
 

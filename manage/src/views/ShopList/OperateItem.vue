@@ -110,18 +110,17 @@ export default {
     watch: {
         dialogFormVisible(value) {
             this.visible = value;
+            this.title = this.$props.isEdit ? '编辑商品' : '新建商品';
         },
         resource(value) {
             // this.$nextTick(() => {
             // });
             this.form = { imageUrl: '', ...value };
-            console.log(this.form.imageUrl);
-            this.fileList = [{ url: this.form.imageUrl, name: '' }];
+            this.fileList = this.form.imageUrl ? [{ url: this.form.imageUrl, name: '' }] : [];
         },
-        isEdit(value) {
-            this.title = value ? '编辑商品' : '新建商品';
-            this.editBool = value;
-        }
+    },
+    destroyed() {
+        this.form.imageUrl.includes('blob') && URL.revokeObjectURL(this.form.imageUrl);
     },
     methods: {
         checkNumber(rule, value, callback) {
@@ -143,7 +142,6 @@ export default {
                 name: '',
             };
             this.fileList = [];
-            this.editBool = false;
             this.$refs[formName || 'ruleForm'].resetFields();
             this.$refs.upload.clearFiles();
             this.$emit('closeModal');
@@ -152,7 +150,6 @@ export default {
         onChange(file) {
             this.form.imageUrl = URL.createObjectURL(file.raw);
             this.form.file = file;
-            // console.log(file, this.form.imageUrl);
 
         },
         handleRemove() {
@@ -174,20 +171,20 @@ export default {
             try {
                 const { file, ...props } = formdata;
                 const formData = new FormData();
-                Object.keys(file).forEach((key) => {
+                Object.keys(file || {}).forEach((key) => {
                     if (file[key]) {
                         formData.append(key, file[key]);
                     }
                 });
                 formData.append('result', JSON.stringify(props));
-                if (this.editBool) {
+                if (this.$props.isEdit) {
                     await shop.update(formData);
                 } else {
                     await shop.post(formData);
                 }
                 this.$message({
                     type: 'success',
-                    message: this.editBool ? '更新成功' : '创建成功',
+                    message: this.$props.isEdit ? '更新成功' : '创建成功',
                     showClose: true,
                     duration: 2000
                 });

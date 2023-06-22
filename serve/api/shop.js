@@ -68,6 +68,7 @@ shopRoute.get('/:id/detail', (req, res) => {
   }
   res.json(responseData);
 });
+
 // 添加信息
 shopRoute.post('/add', (req, res) => {
   var form = new multiparty.Form();
@@ -104,16 +105,53 @@ shopRoute.post('/add', (req, res) => {
 
 // 更新
 shopRoute.post('/update', (req, res) => {
-  const data = req.body;
-  const index = baseList.findIndex((i) => i.id === data.id);
-  let responseData = {};
-  if (index >= 0) {
-    baseList[index] = {...baseList[index], ...data, updateTime: nowMoment()};
-    responseData = {data: null, status: 200};
-  } else {
-    responseData = {data: null, status: 300, message: '数据不存在'};
-  }
-  res.json(responseData);
+  const form = new multiparty.Form();
+  form.parse(req, function (err, fields, file) {
+    const data = JSON.parse(fields.result[0]);
+    const index = baseList.findIndex((i) => i.id === data.id);
+    let oldImgUrl = '';
+
+    let responseData = {};
+    if (index >= 0) {
+      oldImgUrl = baseList[index]?.imageUrl;
+      baseList[index] = {...baseList[index], ...data, updateTime: nowMoment()};
+      // fs.unlink(filePath, )
+      responseData = {data: null, status: 200};
+    } else {
+      responseData = {data: null, status: 300, message: '数据不存在'};
+    }
+    // 是新加文件
+    if (file?.raw && index >= 0) {
+      const [{originalFilename, path: tempPath}] = file.raw;
+      // 生成新的文件名
+      const newFileName = `${Date.now()}-${originalFilename}`;
+      const newFilePath = path.join(__dirname, '../public/images', newFileName);
+      // 将临时文件保存到新位置
+      const readStream = fs.createReadStream(tempPath);
+      const writeStream = fs.createWriteStream(newFilePath);
+      readStream.pipe(writeStream);
+
+      writeStream.on('close', () => {
+        const imageUrl = `http://localhost:8100/images/${newFileName}`;
+        baseList[index] = {
+          ...baseList[index],
+          ...data,
+          updateTime: nowMoment(),
+          imageUrl,
+        };
+      });
+      // 删除旧图片
+      const imgName = oldImgUrl?.split('/').pop();
+      const deleteUrl = path.join(__dirname, '../public/images', imgName);
+      if (fs.existsSync(deleteUrl)) {
+        fs.unlink(deleteUrl, (err) => {
+          if (err) throw err;
+          console.log(`已删除文件：${oldImgUrl}`);
+        });
+      }
+    }
+    res.json(responseData);
+  });
 });
 
 // 获取echarts分类数据
