@@ -33,7 +33,7 @@ userRoute.post('/login', (req, res) => {
   if (loginUPwd && decrypt(loginUPwd) !== password) {
     responseData = {data: null, status: 300, message: '密码或用户错误'};
   }
-  loginUser = new Set(...loginUser.push(name));
+  loginUser = [...new Set([...loginUser, name])];
   res.json(responseData);
 });
 // 注册
@@ -68,7 +68,7 @@ userRoute.post('/register', (req, res) => {
       message: '注册成功',
     };
   }
-  loginUser = new Set(...loginUser.push(name));
+  loginUser = [...new Set([...loginUser, name])];
   res.json(responseData);
 });
 
