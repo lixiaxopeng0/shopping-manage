@@ -39,6 +39,7 @@
 </template>
 <script>
 import shop from '@/api/shop';
+import store from '@/store';
 
 export default {
     name: 'OperateItem',
@@ -160,7 +161,8 @@ export default {
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    this.$data.form = { ...this.form };
+                    const name = JSON.parse(store.state.userInfo).name;
+                    this.$data.form = { ...this.form, name };
                     this.onOk(this.form);
                 } else {
                     return false;
