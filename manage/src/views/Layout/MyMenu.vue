@@ -23,6 +23,10 @@
                     </el-menu-item>
                 </el-menu-item-group>
             </el-submenu>
+            <el-menu-item index="user">
+                <i class="iconfont icon-gy_xitongshezhi"></i>
+                <span slot="title">账户管理</span>
+            </el-menu-item>
         </el-menu>
         <div class="stretch">
             <i class="iconfont icon-os-icon-outdent" @click="handleClick" v-if="isCollapse"></i>

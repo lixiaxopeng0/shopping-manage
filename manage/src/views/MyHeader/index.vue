@@ -8,7 +8,12 @@
             <div class="space"></div>
             <div class="user">
                 <el-dropdown @command="handleCommand">
-                    <el-avatar icon="el-icon-user-solid" size="small"></el-avatar>
+                    <!-- <el-avatar icon="el-icon-user-solid" size="small" :src="imageUrl"></el-avatar> -->
+                    <div class="avatar-content">
+                        <el-avatar fit="fit" :src="imageUrl" v-if="!!imageUrl" size="small"></el-avatar>
+                        <el-avatar icon="el-icon-user-solid" size="small" v-else></el-avatar>
+                        <span class="username">{{ username }}</span>
+                    </div>
                     <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item command="exit">退出</el-dropdown-item>
                     </el-dropdown-menu>
@@ -20,20 +25,48 @@
 </template>
 <script>
 import { mapMutations } from 'vuex';
+import store from '@/store';
+import shop from '@/api/shop';
+
 export default {
     name: 'MyHeader',
-    data() {
-        return {
-
-        };
+    // data() {
+    //     return {
+    //         imageUrl: '',
+    //     };
+    // },
+    computed: {
+        imageUrl() {
+            return JSON.parse(store.state.userInfo)?.imageUrl;
+        },
+        username() {
+            return JSON.parse(store.state.userInfo)?.name;
+        }
     },
     methods: {
         ...mapMutations(['removeToken']),
         ...mapMutations(['setUserInfo']),
-        handleCommand() {
-            this.removeToken();
-            this.setUserInfo({ login: false });
-            this.$router.push('/login');
+        async handleCommand() {
+            try {
+                await shop.exit(JSON.parse(store.state.userInfo));
+                this.removeToken();
+                this.setUserInfo({ exit: true });
+                this.$message({
+                    type: 'success',
+                    message: '退出成功',
+                    showClose: true,
+                    duration: 2000
+                });
+                this.$router.push('/login');
+            } catch (e) {
+                this.$message({
+                    type: 'error',
+                    message: e.message,
+                    showClose: true,
+                    duration: 2000
+                });
+            }
+
         }
     }
 };
@@ -48,7 +81,7 @@ export default {
 
     padding: 0 20px;
     display: grid;
-    grid-template-columns: 200px 1fr 80px;
+    grid-template-columns: 200px 1fr 100px;
     align-items: center;
 
     .manage-icon {
@@ -65,9 +98,15 @@ export default {
         }
     }
 
-    .user {
-        // border: 1px solid #fff;
-        // height: 100%;
+    .avatar-content {
+        display: flex;
+        align-items: center;
+
+        .username {
+            color: #fff;
+            margin-left: 10px;
+            font-size: 12px;
+        }
     }
 }
 

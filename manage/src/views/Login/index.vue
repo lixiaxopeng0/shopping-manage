@@ -81,8 +81,8 @@ export default {
                     const { data } = await shop.register(this.form);
                     result = data;
                 }
-                this.setToken({ ...result });
-                this.setUserInfo({ login: true, ...result });
+                this.setToken(result);
+                this.setUserInfo(result);
                 this.resetForm(formName);
                 this.$message({
                     type: 'success',

@@ -6,7 +6,9 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     token: localStorage.getItem('token') ? localStorage.getItem('token') : '',
-    userInfo: {},
+    userInfo: localStorage.getItem('userInfo')
+      ? localStorage.getItem('userInfo')
+      : `{}`,
   },
   getters: {},
   mutations: {
@@ -20,7 +22,10 @@ export default new Vuex.Store({
       localStorage.removeItem('token');
     },
     setUserInfo(state, user) {
-      state.userInfo = user.login ? {} : user.userInfo;
+      state.userInfo = user.exit ? `{}` : JSON.stringify(user.userInfo);
+      !user.exit &&
+        localStorage.setItem('userInfo', JSON.stringify(user.userInfo));
+      user.exit && localStorage.removeItem('userInfo');
     },
   },
   actions: {},

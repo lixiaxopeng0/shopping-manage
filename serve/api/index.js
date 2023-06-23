@@ -33,7 +33,7 @@ app.listen(8100, () => {
       if (fs.existsSync(filePath)) {
         fs.unlink(filePath, (err) => {
           if (err) throw err;
-          console.log(`已删除文件：${filePath}`);
+          console.log(`开启-已删除文件：${filePath}`);
         });
       }
     }

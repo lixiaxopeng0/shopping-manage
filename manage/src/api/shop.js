@@ -55,10 +55,20 @@ export default {
       data,
     });
   },
-  exit: () => {
+  exit: (data) => {
     return instance({
       url: '/api/user/exit',
       method: 'POST',
+      data,
+    });
+  },
+  avatarUpdate: (data) => {
+    return instance({
+      url: '/api/user/user-update',
+      method: 'POST',
+      data,
+      //必须false才会自动加上正确的Content-Type
+      contentType: false,
     });
   },
 };

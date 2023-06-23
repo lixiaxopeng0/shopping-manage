@@ -120,7 +120,7 @@ export default {
         },
     },
     destroyed() {
-        this.form.imageUrl.includes('blob') && URL.revokeObjectURL(this.form.imageUrl);
+        this.form.imageUrl?.includes('blob') && URL.revokeObjectURL(this.form.imageUrl);
     },
     methods: {
         checkNumber(rule, value, callback) {

@@ -130,6 +130,7 @@ shopRoute.post('/update', (req, res) => {
       const readStream = fs.createReadStream(tempPath);
       const writeStream = fs.createWriteStream(newFilePath);
       readStream.pipe(writeStream);
+      console.log(111);
 
       writeStream.on('close', () => {
         const imageUrl = `http://localhost:8100/images/${newFileName}`;
@@ -142,7 +143,13 @@ shopRoute.post('/update', (req, res) => {
       });
       // 删除旧图片
       const imgName = oldImgUrl?.split('/').pop();
-      const deleteUrl = path.join(__dirname, '../public/images', imgName);
+      console.log(imgName, '=-=s=', oldImgUrl);
+
+      const deleteUrl = path.join(
+        __dirname,
+        '../public/images',
+        imgName ?? 'xxx123.png'
+      );
       if (fs.existsSync(deleteUrl)) {
         fs.unlink(deleteUrl, (err) => {
           if (err) throw err;

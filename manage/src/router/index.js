@@ -9,6 +9,7 @@ import {BASE_URL} from '@/dicts/route';
 const ShopList = () => import('@/views/ShopList/index.vue');
 const ShopMonitoring = () => import('@/views/ShopMonitoring/index.vue');
 const ItemDetail = () => import('@/views/ItemDetail/index.vue');
+const UserManage = () => import('@/views/UserManage/index.vue');
 
 Vue.use(VueRouter);
 
@@ -40,6 +41,11 @@ const routes = [
             name: 'ShopMonitoring',
             component: ShopMonitoring,
           },
+          {
+            path: 'user',
+            name: 'UserManage',
+            component: UserManage,
+          },
         ],
       },
       {
@@ -68,7 +74,6 @@ router.beforeEach((to, from, next) => {
     next();
   } else {
     let token = localStorage.getItem('token');
-    console.log(token);
     if (!token) {
       next('/login');
     } else {
