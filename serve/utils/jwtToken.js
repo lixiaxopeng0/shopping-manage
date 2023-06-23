@@ -18,7 +18,7 @@ const manager = {
 const jwtToekn = (req, res, next) => {
   //   console.log('Original URL:', req?.body);
   const url = req.url || req.originalUrl;
-  if (['/user/login', '/user/register', '/user/user-update']) {
+  if (['/user/login', '/user/register', '/user/user-update', '/user/exit']) {
     let user_info = {};
     // 用户名，头像地址
     // 判断文件是否存在
