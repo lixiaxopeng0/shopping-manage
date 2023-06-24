@@ -1,6 +1,6 @@
 // 处理classify数据类型，叠加
 const getClassify = ({baseList, type = 'productName'}) => {
-  return baseList.reduce((total, item) => {
+  return baseList?.reduce((total, item) => {
     return {
       ...total,
       [item?.[type]]: {

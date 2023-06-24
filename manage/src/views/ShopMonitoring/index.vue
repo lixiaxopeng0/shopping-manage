@@ -30,6 +30,7 @@ export default {
         this.getClassify('productName').then(
             (res) => {
                 const data = res.data || {};
+                const isEmpty = !Object.keys(data)?.length;
                 this.productOptions = {
                     tooltip: {
                         trigger: 'axis',
@@ -51,7 +52,7 @@ export default {
                     yAxis: {
                         type: 'value'
                     },
-                    series: [
+                    series: isEmpty ? [] : [
                         {
                             barMaxWidth: 30,
                             type: 'bar',
@@ -72,7 +73,7 @@ export default {
                         orient: 'vertical',
                         left: 'left'
                     },
-                    series: [
+                    series: isEmpty ? [] : [
                         {
                             type: 'pie',
                             radius: '50%',
@@ -80,15 +81,15 @@ export default {
                                 name: key,
                                 value: item.resetNumber,
                             })),
-                            emphasis: {
-                                itemStyle: {
-                                    shadowBlur: 10,
-                                    shadowOffsetX: 0,
-                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                                }
-                            }
                         }
-                    ]
+                    ],
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
                 };
             }
         ).catch(() => {

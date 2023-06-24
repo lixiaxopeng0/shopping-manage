@@ -4,7 +4,7 @@
             <MyMenu class="menu" @changeCollapse="changeCollapse" />
             <div class="content" :class="{ shrinkage: isCollapse }">
                 <div></div>
-                <div><router-view /></div>
+                <div class="info-content"><router-view /></div>
             </div>
         </div>
     </div>
@@ -55,6 +55,10 @@ export default {
 
     .shrinkage {
         grid-template-columns: 64px 1fr;
+    }
+
+    .info-content {
+        overflow: hidden;
     }
 }
 </style>
