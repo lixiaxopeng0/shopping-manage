@@ -10,9 +10,9 @@ export default {
     });
   },
   // 删除数据
-  delete: (id) => {
+  delete: ({id, uuid}) => {
     return instance({
-      url: `/api/shop-list/${id}/delete`,
+      url: `/api/shop-list/${id}/${uuid}/delete`,
       method: 'DELETE',
     });
   },
@@ -35,9 +35,9 @@ export default {
     });
   },
   // 获取详情数据
-  detail: (id) => {
+  detail: ({id, uuid}) => {
     return instance({
-      url: `/api/shop-list/${id}/detail`,
+      url: `/api/shop-list/${id}/${uuid}/detail`,
       method: 'GET',
     });
   },
@@ -69,6 +69,13 @@ export default {
       data,
       //必须false才会自动加上正确的Content-Type
       contentType: false,
+    });
+  },
+  classify: (params) => {
+    return instance({
+      url: `/api/shop-list/classify`,
+      method: 'GET',
+      params,
     });
   },
 };

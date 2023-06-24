@@ -161,8 +161,8 @@ export default {
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    const name = JSON.parse(store.state.userInfo).name;
-                    this.$data.form = { ...this.form, name };
+                    const { name, id: uuid } = JSON.parse(store.state.userInfo);
+                    this.$data.form = { ...this.form, uuid, name };
                     this.onOk(this.form);
                 } else {
                     return false;

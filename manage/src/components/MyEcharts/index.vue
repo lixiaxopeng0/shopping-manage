@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div id="main" :style="myStyle"></div>
+        <div :id="chartId" :style="myStyle" :key="chartId"></div>
     </div>
 </template>
 <script>
@@ -16,10 +16,39 @@ export default {
             default: () => ({ width: '600px', height: '400px' })
         }
     },
-    mounted() {
-        let myChart = this.$echarts.init(document.getElementById('main'));
-        myChart.setOption(this.$props.options);
-
+    data() {
+        return { myChart: null };
     },
+    computed: {
+        chartId() {
+            let id = `myChart-${Math.random()}`;
+            // 确保id唯一性
+            let count = 0;
+            while (document.getElementById(id) !== null) {
+                id = `${id}-${count}`;
+                count++;
+            }
+            // 返回唯一id
+            return id;
+        }
+    },
+    mounted() {
+        this.myChart = this.$echarts.init(document.getElementById(this.chartId));
+        this.myChart.setOption(this.$props.options);
+    },
+    watch: {
+        options(value) {
+            if (this.myChart) {
+                this.myChart.setOption(value);
+            }
+        }
+    },
+    beforeDestroy() {
+        // 确保数据不合并
+        if (this.myChart) {
+            this.myChart.dispose();
+            this.clear();
+        }
+    }
 };
 </script>

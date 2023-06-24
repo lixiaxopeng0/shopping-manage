@@ -3,6 +3,7 @@ const Mock = require('mockjs');
 const dayjs = require('dayjs');
 const multiparty = require('multiparty');
 const getClassify = require('../utils/getClassify');
+const {shopListInfoPath} = require('../dicts');
 const fs = require('fs');
 const path = require('path');
 
@@ -10,28 +11,10 @@ const shopRoute = express.Router();
 
 // 当前时间
 const nowMoment = () => dayjs().format('YYYY-MM-DD HH:mm:ss');
-const getItem = () => {
-  return Mock.mock({
-    'data|1': [
-      {
-        name: Mock.mock('@cname'),
-        id: Mock.mock('@id'),
-        productName: '手机',
-        email: Mock.mock('@email'),
-        'total|100-150': 1,
-        'number|1-100': 1,
-        createTime: Mock.mock('@datetime'),
-        updateTime: null,
-        description: Mock.mock('@cparagraph(1, 3)'),
-        'price|1000-3500': 1,
-      },
-    ],
-  }).data;
-};
-let baseList = [...Array.from({length: 10})].map(() => getItem());
 // 列表获取
 shopRoute.get('', (req, res) => {
-  const {page = 1, pageSize = 10, searchName} = req.query;
+  const {page = 1, pageSize = 10, searchName, uuid} = req.query;
+  const baseList = res.locals.shopList?.[uuid] || [];
   const list = baseList?.filter((i) => {
     return i?.productName?.includes(searchName) || !searchName;
   });
@@ -45,11 +28,15 @@ shopRoute.get('', (req, res) => {
   });
 });
 // 列表删除
-shopRoute.delete('/:id/delete', (req, res) => {
-  const id = req.params.id;
+shopRoute.delete('/:id/:uuid/delete', (req, res) => {
+  const {id, uuid} = req.params;
+  let shopList = res.locals.shopList;
+  let baseList = shopList?.[uuid] || [];
   const index = baseList.findIndex((i) => i.id === id);
   if (index >= 0) {
     baseList.splice(index, 1);
+    shopList[uuid] = baseList;
+    fs.writeFileSync(shopListInfoPath, JSON.stringify(shopList));
     res.json({data: null, status: 200});
   } else {
     res.json({data: null, status: 300, message: '删除数据不存在'});
@@ -57,8 +44,9 @@ shopRoute.delete('/:id/delete', (req, res) => {
 });
 
 // 获取详情
-shopRoute.get('/:id/detail', (req, res) => {
-  const id = req.params.id;
+shopRoute.get('/:id/:uuid/detail', (req, res) => {
+  const {id, uuid} = req.params;
+  let baseList = res.locals.shopList?.[uuid] || [];
   const detail = baseList.find((i) => i.id === id);
   let responseData = {};
   if (detail) {
@@ -71,9 +59,11 @@ shopRoute.get('/:id/detail', (req, res) => {
 
 // 添加信息
 shopRoute.post('/add', (req, res) => {
+  let shopList = res.locals.shopList;
   var form = new multiparty.Form();
   form.parse(req, function (err, fields, file) {
     const data = JSON.parse(fields.result[0]);
+    let baseList = shopList?.[data?.uuid] || [];
     const index = baseList.findIndex((i) => i.productName === data.productName);
     if (index >= 0) {
       res.json({data: null, status: 300, message: `${data.productName}已存在`});
@@ -92,11 +82,15 @@ shopRoute.post('/add', (req, res) => {
         const imageUrl = `http://localhost:8100/images/${newFileName}`;
         baseList.unshift({
           ...data,
-          number: data.total,
+          number: Mock.mock({
+            [`number|1-${data.total}`]: 1,
+          }).number,
           id: Mock.mock('@id'),
           createTime: nowMoment(),
           imageUrl,
         });
+        shopList[data?.uuid] = baseList;
+        fs.writeFileSync(shopListInfoPath, JSON.stringify(shopList));
         res.json({data: null, status: 200});
       });
     }
@@ -105,9 +99,11 @@ shopRoute.post('/add', (req, res) => {
 
 // 更新
 shopRoute.post('/update', (req, res) => {
+  let shopList = res.locals.shopList;
   const form = new multiparty.Form();
   form.parse(req, function (err, fields, file) {
     const data = JSON.parse(fields.result[0]);
+    let baseList = shopList?.[data?.uuid] || [];
     const index = baseList.findIndex((i) => i.id === data.id);
     let oldImgUrl = '';
 
@@ -130,7 +126,6 @@ shopRoute.post('/update', (req, res) => {
       const readStream = fs.createReadStream(tempPath);
       const writeStream = fs.createWriteStream(newFilePath);
       readStream.pipe(writeStream);
-      console.log(111);
 
       writeStream.on('close', () => {
         const imageUrl = `http://localhost:8100/images/${newFileName}`;
@@ -143,7 +138,6 @@ shopRoute.post('/update', (req, res) => {
       });
       // 删除旧图片
       const imgName = oldImgUrl?.split('/').pop();
-      console.log(imgName, '=-=s=', oldImgUrl);
 
       const deleteUrl = path.join(
         __dirname,
@@ -156,17 +150,31 @@ shopRoute.post('/update', (req, res) => {
           console.log(`已删除文件：${oldImgUrl}`);
         });
       }
+      shopList[data?.uuid] = baseList;
+      fs.writeFileSync(shopListInfoPath, JSON.stringify(shopList));
+      res.json(responseData);
+    } else {
+      shopList[data?.uuid] = baseList;
+      fs.writeFileSync(shopListInfoPath, JSON.stringify(shopList));
+      res.json(responseData);
     }
-    res.json(responseData);
   });
 });
 
 // 获取echarts分类数据
 shopRoute.get('/classify', (req, res) => {
   // 按productName、name比较好
-  const type = req.query?.type;
-  const result = getClassify(type);
-  res.json({data: result, status: 200});
+  const {type, uuid} = req.query;
+  let responseData = {};
+  let result = {};
+  if (type && uuid) {
+    let baseList = res.locals.shopList?.[uuid];
+    result = getClassify({type, baseList});
+    responseData = {data: result, status: 200};
+  } else {
+    responseData = {data: {}, status: 300, message: '找不到数据'};
+  }
+  res.json(responseData);
 });
 
 module.exports = shopRoute;

@@ -17,6 +17,7 @@ import shop from '@/api/shop';
 import ListView from '@/components/List';
 import { columns } from './columns';
 import OperateItem from './OperateItem.vue';
+import store from '@/store';
 
 export default {
     name: 'ShopList',
@@ -31,12 +32,17 @@ export default {
             dialogFormVisible: false,
             isEdit: false,
             resource: {},
+            uuid: '',
         };
+    },
+    mounted() {
+        const { id: uuid } = JSON.parse(store.state.userInfo);
+        this.uuid = uuid;
     },
     methods: {
         async getList(params) {
             try {
-                const data = await shop.getList(params);
+                const data = await shop.getList({ ...params, uuid: this.uuid });
                 this.tableData = data;
             } catch (e) {
                 this.tableData = { data: [], total: 0 };
@@ -63,7 +69,7 @@ export default {
         },
         async handleDelete(item, { refresh }) {
             try {
-                await shop.delete(item.id);
+                await shop.delete({ id: item.id, uuid: this.uuid });
                 this.$message({
                     message: '删除成功',
                     type: 'success',
