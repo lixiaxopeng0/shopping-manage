@@ -12,6 +12,8 @@
   
 <script>
 import MyMenu from '@/views/Layout/MyMenu.vue';
+import store from '@/store';
+import { mapMutations } from 'vuex';
 
 export default {
     name: 'BaseContent',
@@ -20,13 +22,18 @@ export default {
     },
     data() {
         return {
-            isCollapse: false,
+            isCollapse: store.state.isCollapse,
         };
     },
     methods: {
+        ...mapMutations(['changeStoreCollapse']),
         changeCollapse(value) {
             this.isCollapse = value;
+            this.changeStoreCollapse(value);
         }
+    },
+    created() {
+        console.log(localStorage.getItem('isCollapse'), '===localStorage.getItem()=');
     }
 };
 </script>
@@ -47,9 +54,7 @@ export default {
     }
 
     .shrinkage {
-        .sider-collapse {
-            grid-template-columns: 0 1fr;
-        }
+        grid-template-columns: 64px 1fr;
     }
 }
 </style>

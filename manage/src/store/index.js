@@ -9,6 +9,7 @@ export default new Vuex.Store({
     userInfo: localStorage.getItem('userInfo')
       ? localStorage.getItem('userInfo')
       : `{}`,
+    isCollapse: localStorage.getItem('isCollapse') === 'true',
   },
   getters: {},
   mutations: {
@@ -26,6 +27,10 @@ export default new Vuex.Store({
       !user.exit &&
         localStorage.setItem('userInfo', JSON.stringify(user.userInfo));
       user.exit && localStorage.removeItem('userInfo');
+    },
+    changeStoreCollapse(state, bool) {
+      state.isCollapse = bool;
+      localStorage.setItem('isCollapse', bool);
     },
   },
   actions: {},
