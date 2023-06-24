@@ -14,14 +14,7 @@ const manager = {
 };
 const userInfoGet = (req, res, next) => {
   const url = req.url || req.originalUrl;
-  if (
-    [
-      '/user/login',
-      '/user/register',
-      '/user/user-update',
-      '/user/exit',
-    ].includes(url)
-  ) {
+  if (url.startsWith('/user')) {
     let user_info = {};
     // 用户名，头像地址
     // 判断文件是否存在

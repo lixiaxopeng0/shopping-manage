@@ -75,6 +75,15 @@ const whitelist = [];
 // 定义刷新 Token 的接口
 userRoute.post('/refresh', (req, res) => {
   const token = res.locals.data;
+  let user_info = res.locals.user_info || {};
+  const {name} = req.body;
+  const {loginStatus} = user_info?.[name];
+  let responseData = {};
+  if (loginStatus) {
+    responseData = {data: token, status: 200};
+  } else {
+    responseData = {data: null, status: 200};
+  }
   // 检查请求的来源是否合法（自用不写）
   // const ipAddress = req.socket.remoteAddress;
   // const userAgent = req.get('user-agent');
