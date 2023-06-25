@@ -17,7 +17,6 @@ import shop from '@/api/shop';
 import ListView from '@/components/List';
 import { columns } from './columns';
 import OperateItem from './OperateItem.vue';
-import store from '@/store';
 
 export default {
     name: 'ShopList',
@@ -36,7 +35,7 @@ export default {
         };
     },
     mounted() {
-        const { id: uuid } = JSON.parse(store.state.userInfo);
+        const { id: uuid } = JSON.parse(this.$store.state.userInfo);
         this.uuid = uuid;
     },
     methods: {
