@@ -9,7 +9,6 @@
 import MyEcharts from '@/components/MyEcharts/index.vue';
 import PageHeader from '@/components/PageHeader/index.vue';
 import shop from '@/api/shop';
-import store from '@/store';
 
 export default {
     name: 'ShopMonitoring',
@@ -26,7 +25,7 @@ export default {
         };
     },
     mounted() {
-        this.uuid = JSON.parse(store.state.userInfo)?.id;
+        this.uuid = JSON.parse(this.$store.state.userInfo)?.id;
         this.getClassify('productName').then(
             (res) => {
                 const data = res.data || {};
