@@ -45,7 +45,6 @@ export default {
     watch: {
         options(value) {
             if (this.myChart) {
-                console.log(!value?.series?.length);
                 this.myChart.setOption(value);
             }
         }
