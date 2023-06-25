@@ -12,7 +12,6 @@
   
 <script>
 import MyMenu from '@/views/Layout/MyMenu.vue';
-import store from '@/store';
 import { mapMutations } from 'vuex';
 
 export default {
@@ -22,7 +21,7 @@ export default {
     },
     data() {
         return {
-            isCollapse: store.state.isCollapse,
+            isCollapse: this.$store.state.isCollapse,
         };
     },
     methods: {
@@ -32,9 +31,6 @@ export default {
             this.changeStoreCollapse(value);
         }
     },
-    created() {
-        console.log(localStorage.getItem('isCollapse'), '===localStorage.getItem()=');
-    }
 };
 </script>
 <style scoped lang="less">
