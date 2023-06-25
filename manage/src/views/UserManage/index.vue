@@ -61,7 +61,6 @@
     </div>
 </template>
 <script>
-import store from '@/store';
 import shop from '@/api/shop';
 import { mapMutations } from 'vuex';
 export default {
@@ -103,7 +102,7 @@ export default {
         this.imageUrl?.includes('blob') && URL.revokeObjectURL(this.form.imageUrl);
     },
     mounted() {
-        const data = JSON.parse(store.state.userInfo);
+        const data = JSON.parse(this.$store.state.userInfo);
         this.form = data;
         this.userInfo = { ...data };
         const imageUrl = data.imageUrl;
@@ -143,7 +142,7 @@ export default {
                         formData.append(key, file[key]);
                     }
                 });
-                formData.append('result', JSON.stringify({ ...props, username: this.userInfo?.name }));
+                formData.append('result', JSON.stringify({ ...props, username: this.userInfo?.name, uuid: this.userInfo.id }));
                 const { data } = await shop.avatarUpdate(formData);
                 this.setUserInfo({ userInfo: data });
                 const imageUrl = data?.imageUrl;
@@ -170,16 +169,21 @@ export default {
 </script>
 <style lang="less" scoped>
 .user-content {
-    position: relative;
+    // position: relative;
+    display: flex;
+    justify-content: center;
 }
 
 .box-card {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 20px;
-    padding: 20px;
+    margin-top: 20px;
 }
+// .box-card {
+//     position: absolute;
+//     left: 50%;
+//     transform: translateX(-50%);
+//     top: 20px;
+//     padding: 20px;
+// }
 
 .avatar-content {
     display: flex;
