@@ -117,6 +117,7 @@ userRoute.post('/user-update', (req, res) => {
   form.parse(req, function (err, fields, file) {
     const data = JSON.parse(fields.result[0]);
     const username = data.username;
+    const id = data?.id;
     const userData = user_info?.[username];
     let oldImgUrl = '';
     if (!userData) {
@@ -154,7 +155,8 @@ userRoute.post('/user-update', (req, res) => {
           ...userData,
           ...data,
           number: data.total,
-          id: Mock.mock('@id'),
+          // id: Mock.mock('@id'),
+          id,
           imageUrl,
         };
         responseData = {
