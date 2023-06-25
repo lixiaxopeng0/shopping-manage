@@ -32,8 +32,8 @@ app.use('/user', userRoute);
 
 app.listen(8100, () => {
   // 初始化删除所有数据,如果保存请去掉
-  // deleteOldImage();
-  // deleteShoppList();
-  // deleteOldUser();
+  deleteOldImage();
+  deleteShoppList();
+  deleteOldUser();
   console.log('localhost:8100开启服务...');
 });
