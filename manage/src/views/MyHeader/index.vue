@@ -25,7 +25,6 @@
 </template>
 <script>
 import { mapMutations } from 'vuex';
-import store from '@/store';
 import shop from '@/api/shop';
 
 export default {
@@ -37,10 +36,10 @@ export default {
     // },
     computed: {
         imageUrl() {
-            return JSON.parse(store.state.userInfo)?.imageUrl;
+            return JSON.parse(this.$store.state.userInfo)?.imageUrl;
         },
         username() {
-            return JSON.parse(store.state.userInfo)?.name;
+            return JSON.parse(this.$store.state.userInfo)?.name;
         }
     },
     methods: {
@@ -48,7 +47,7 @@ export default {
         ...mapMutations(['setUserInfo']),
         async handleCommand() {
             try {
-                await shop.exit(JSON.parse(store.state.userInfo));
+                await shop.exit(JSON.parse(this.$store.state.userInfo));
                 this.removeToken();
                 this.setUserInfo({ exit: true });
                 this.$message({
