@@ -50,7 +50,6 @@
 <script>
 import ShowField from './ShowField.vue';
 import shop from '@/api/shop';
-import store from '@/store';
 import PageHeader from '@/components/PageHeader/index.vue';
 
 export default {
@@ -82,7 +81,7 @@ export default {
         },
         async getDetail() {
             const { id } = this.$route.params;
-            const { id: uuid } = JSON.parse(store.state.userInfo);
+            const { id: uuid } = JSON.parse(this.$store.state.userInfo);
             try {
                 const { data } = await shop.detail({ id, uuid });
                 this.info = { imageUrl: '', ...data };
