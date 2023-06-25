@@ -37,7 +37,6 @@
   
 <script>
 import { BASE_URL } from '@/dicts/route';
-import store from '@/store';
 
 export default {
     name: 'MyMenu',
@@ -49,7 +48,7 @@ export default {
     // ],
     data() {
         return {
-            isCollapse: store.state.isCollapse,
+            isCollapse: this.$store.state.isCollapse,
             defaultActive: 'home'
         };
     },
