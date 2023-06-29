@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="divs" :class="{ 'no-series': !options?.series?.length }">
-            <div :id="chartId" ref="echartDom" :style="myStyle" :key="chartId"></div>
+            <div ref="echart" :style="myStyle"></div>
         </div>
         <div :style="myStyle" class="empty-content" v-show="!options?.series?.length">
             <i class="iconfont icon-zanwushuju"></i>
@@ -25,21 +25,8 @@ export default {
     data() {
         return { myChart: null };
     },
-    computed: {
-        chartId() {
-            let id = `myChart-${Math.random()}`;
-            // 确保id唯一性
-            let count = 0;
-            while (document.getElementById(id) !== null) {
-                id = `${id}-${count}`;
-                count++;
-            }
-            // 返回唯一id
-            return id;
-        }
-    },
     mounted() {
-        this.myChart = this.$echarts.init(document.getElementById(this.chartId));
+        this.myChart = this.$echarts.init(this.$refs.echart);
         this.myChart.setOption(this.$props.options);
     },
     watch: {

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {ElMessage} from 'element-ui';
 import store from '@/store';
+import router from '@/router';
 
 const instance = axios.create({
   // baseURL: 'http://192.168.0.104:8100/',
@@ -32,6 +33,15 @@ instance.interceptors.request.use(
 // axios相应拦截
 instance.interceptors.response.use(
   (res) => {
+    if (res.data.status === 400) {
+      store.commit('removeToken');
+      router.push('/login');
+      // 统一错误提示
+      ElMessage({
+        type: 'warning',
+        message: res.data.message,
+      });
+    }
     if (res.data.status > 200) {
       throw Error(res.data.message);
     }
